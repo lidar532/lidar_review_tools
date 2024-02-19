@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "lidar_review_tools"
+  site-url: "https://lidar532.github.io/lidar_review_tools"
+  description: "Notebooks and tools for reviewing and comparing bathy lidar data."
+  repo-branch: main
+  repo-url: "https://github.com/lidar532/lidar_review_tools"
