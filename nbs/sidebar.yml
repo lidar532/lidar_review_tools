@@ -1,0 +1,9 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_core.ipynb
+      - 2024-0205-Bulldog.ipynb
+      - Lidar_tools.ipynb
+      - detect_lidar_water_surface.ipynb
+      - ww_bokeh.ipynb
