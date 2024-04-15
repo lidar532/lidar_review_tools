@@ -6,6 +6,9 @@ export:
 clean:
 	nbdev_clean
 
+doc:
+	nbdev_doc
+
 dev:
 	pip install -e .
 

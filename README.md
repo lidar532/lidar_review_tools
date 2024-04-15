@@ -6,6 +6,29 @@
 import lidar_review_tools.lidar_tools  as lt
 ```
 
+``` python
+from lidar_review_tools import lidar_tools
+```
+
+``` python
+import sys
+sys.path
+```
+
+    ['/home/jovyan/work/github-projects/lidar_review_tools/nbs',
+     '/opt/conda/lib/python311.zip',
+     '/opt/conda/lib/python3.11',
+     '/opt/conda/lib/python3.11/lib-dynload',
+     '',
+     '/opt/conda/lib/python3.11/site-packages',
+     '/home/jovyan/work/github-projects/lidar_review_tools']
+
+``` python
+!pwd
+```
+
+    /home/jovyan/work/github-projects/lidar_review_tools/nbs
+
 - Project Website: <https://lidar532.github.io/lidar_review_tools/>
 - Github Repository: <https://github.com/lidar532/lidar_review_tools>
 
@@ -66,11 +89,11 @@ lt.plot_hists( hx4_a )
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="b7282401-d013-4c11-8caa-5cf664d89336">Loading BokehJS ...</span>
+        <span id="c0a69e6a-729f-46c3-a2c5-91fc1db2ee78">Loading BokehJS ...</span>
     </div>
 
     Unable to display output for mime type(s): application/javascript, application/vnd.bokehjs_load.v0+json
 
-  <div id="a76beb3c-575a-4076-a937-ae351fdba814" data-root-id="p1001" style="display: contents;"></div>
+  <div id="e361b47a-7c35-4864-817b-5cd9fd032999" data-root-id="p1001" style="display: contents;"></div>
 
     Unable to display output for mime type(s): application/javascript, application/vnd.bokehjs_exec.v0+json
