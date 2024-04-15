@@ -1,0 +1,182 @@
+[
+  {
+    "objectID": "detect_lidar_water_surface.html",
+    "href": "detect_lidar_water_surface.html",
+    "title": "Detect water surface.",
+    "section": "",
+    "text": "Most water bodies self level. Lidar elevation measurements of the water surface can frequently be detected by looking at histogram of the elevation measurements. The water surface will be flat except for any surface wave action, and even the waves can be accomodated with larger histogram bins. This function eaxmines the lidar elevatoin measurements and if it detects a flat surface which is above a threshold, it will return an object with attributes about the surface, including the detected water surface mean and median heights, and the standard deviation of those detected heights. It also returns a bool water_found.\nimport lidar_review_tools.lidar_tools as lt\nsource",
+    "crumbs": [
+      "Detect water surface."
+    ]
+  },
+  {
+    "objectID": "detect_lidar_water_surface.html#colab",
+    "href": "detect_lidar_water_surface.html#colab",
+    "title": "Detect water surface.",
+    "section": "Colab",
+    "text": "Colab\nIf you are testing this on Google Colab, run this cell to select the ATM data file for testing.\n\nif __name__ == '__main__' and False:\n  test_atm_fn = '/content/lidar_review_tools/data/atm/profile-1-atm-xyz.zip'\n  ! head {test_atm_fn}",
+    "crumbs": [
+      "Detect water surface."
+    ]
+  },
+  {
+    "objectID": "detect_lidar_water_surface.html#docker-jlab.",
+    "href": "detect_lidar_water_surface.html#docker-jlab.",
+    "title": "Detect water surface.",
+    "section": "Docker Jlab.",
+    "text": "Docker Jlab.\nRun this cell if you are running in the Docker Jlab\n\nif __name__ == '__main__' and True:\n  test_atm_fn = '~/work/github-projects/lidar_review_tools/data/atm/profile-1-atm-xyz.zip'\n\nNow, let’s take a quicklook at the first 3 lines of the data in the file.\nIt is in classic CSV format. The first column is Longitude, second column is Latitude and the third is the elevation data.\n\n! zcat {test_atm_fn} | head -3\n\n-49.4788530000,69.0319020000,623.736\n-49.4788610000,69.0318160000,624.403\n-49.4788690000,69.0317280000,623.6",
+    "crumbs": [
+      "Detect water surface."
+    ]
+  },
+  {
+    "objectID": "detect_lidar_water_surface.html#load-the-atm-test-data",
+    "href": "detect_lidar_water_surface.html#load-the-atm-test-data",
+    "title": "Detect water surface.",
+    "section": "Load the ATM test data",
+    "text": "Load the ATM test data\nNow load the test data into a Pandas DataFrameusing the Pandas read_csv() csv reader.\nSince the data does not already have any column labels, we will add column names using the names parameter, and then via the read_csv() function.\n\nif __name__ == '__main__' and True:\n  atm = pd.read_csv(test_atm_fn, names=[\"lon\", \"lat\", \"elev\"])\n\n\natm.head(3)\n\n\n\n\n\n\n\n\n\nlon\nlat\nelev\n\n\n\n\n0\n-49.478853\n69.031902\n623.736\n\n\n1\n-49.478861\n69.031816\n624.403\n\n\n2\n-49.478869\n69.031728\n623.600\n\n\n\n\n\n\n\n\n\nplt.figure( figsize=(10,4))\nplt.scatter( atm['lat'],  atm['elev'], marker='o', s=2 )\n\n\n\n\n\n\n\n\nLoad the ATM test profile dataset, run detect_lidar_water_surface() and plot the results.\n\n## Test detect_lidar_water_surface()\nif __name__ == '__main__' and True:\n  rv = detect_lidar_water_surface(atm, plot=True, thresh=4, binsize = 0.1 )",
+    "crumbs": [
+      "Detect water surface."
+    ]
+  },
+  {
+    "objectID": "detect_lidar_water_surface.html#printout-the-return-rv-data.",
+    "href": "detect_lidar_water_surface.html#printout-the-return-rv-data.",
+    "title": "Detect water surface.",
+    "section": "Printout the return rv data.",
+    "text": "Printout the return rv data.\n\nif __name__ == '__main__' and True:\n  print(\"\\nData returned by detect_lidar_water_surface()\\n\\n Key                 : Value\\n-------------------------------\")\n  for i in rv.__dict__:\n    if i == 'bins' or i == 'hist':\n      continue\n    if type( rv.__dict__[i] ) == np.float64:\n      print(f\"{i:20}: {rv.__dict__[i]:8.3f}\")\n    else:\n      print(f'{i:20}: {rv.__dict__[i]}')\n\n\nData returned by detect_lidar_water_surface()\n\n Key                 : Value\n-------------------------------\nwater_found         : True\nbinsize             : 0.1\nthresh              : 4\nplot                : True\nele_min             :  605.037\nele_max             :  624.403\nsurface_bin_value   :  611.337\npeak_elevation_dif  :   19.366\nmax_v               : 7\nsurface_idx         : 63\nlow                 :  611.237\nhigh                :  611.437\nmean_surface        :  611.417\nstd_surface         :    0.015\nmedian_surface      :  611.421\n\n\n\nx = [atm['lat'].min(), atm['lat'].max()]\ny = [rv.mean_surface,rv.mean_surface]\nplt.figure( figsize=(10,4)) \nplt.plot( x, y, color='blue', alpha=.1)\nplt.scatter(atm['lat'], atm['elev'], marker='o', s=2 )\nplt.text( x[0], y[0]+.2, \"Water Surface\", fontsize=5)\n\nText(69.024727, 611.6167142857144, 'Water Surface')\n\n\n\n\n\n\n\n\n\n\nx\n\n[69.024727, 69.031902]",
+    "crumbs": [
+      "Detect water surface."
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html",
+    "href": "2024-0205-bulldog.html",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "",
+    "text": "Processes points generated by GlobalMapper “profile tool”.",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html#functions",
+    "href": "2024-0205-bulldog.html#functions",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "Functions",
+    "text": "Functions\n\nGeneral Imports\n\nimport numpy as   np\nimport math as    m\nimport pandas as  pd\n# import scipy.special\n\nfrom bokeh.layouts import gridplot\nfrom bokeh.palettes import HighContrast3\nfrom bokeh.plotting import figure, show\nfrom bokeh.io import output_notebook\n\n\n\nConstants\n\nms2knots   = 1.94384\nm2ft       = 3.28084\nft2m       = 1/m2ft\nnp.deg2rad = np.pi/180.0\nnp.rad2deg = 180.0/np.pi\n\n\n\nInit code.\n\noutput_notebook()           # Enable notebook for Bokeh output.\n\n    \n    \n        \n        Loading BokehJS ...",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html#main-code",
+    "href": "2024-0205-bulldog.html#main-code",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "Main Code",
+    "text": "Main Code\n\nPRF                           = 20000          # laser pulse rate\nscan_rate_hz                  = 25             # Scanner spin rate\nFlight_Altitude_m             = 3048          # 10,000ft is 3048m Flight Altitude in meters\nswath_width_m                 = 890            # swath width in meters\nsurvey_ground_speed_m_s       = 70            # ground speed in m/s\nscan_angle_full_d                  = np.arctan( swath_width_m * 0.5 / Flight_Altitude_m ) * np.rad2deg * 2.0\ndeep_rate                     = PRF\nshallow_rate                  = PRF * 2\narea_covered_s                = swath_width_m * survey_ground_speed_m_s\ndeep_rate_per_m2              = deep_rate     / area_covered_s\nshallow_rate_per_m2           = shallow_rate  / area_covered_s\ndeep_and_shallow_rate_per_m2  = deep_rate_per_m2 + shallow_rate_per_m2\n\nprint('Bulldog specs extracted from 2024-0205 dataset')\nprint(f'PRF..........................: {PRF:,} Hz')\nprint(f'Scan rate....................: {scan_rate_hz:,} Hz')\nprint(f'Swath width..................: {swath_width_m} m')\nprint(f'Scan Angle (Full)............: {scan_angle_full_d:4.2f} deg')\nprint(f'Flight Altitude..............: {Flight_Altitude_m} m      ( {int(Flight_Altitude_m * m2ft):,} ft agl )')\nprint(f'Ground speed.................: {survey_ground_speed_m_s} m/s      ( {survey_ground_speed_m_s*ms2knots:0.0f} knots )')\nprint(f'Area coverage rate...........: {area_covered_s:,} m/s  ( {area_covered_s/1e6*3600:1.1f} km2/hour )')\nprint(f'Deep sample rate.............: {deep_rate:,} Hz')\nprint(f'Shallow sample rate..........: {shallow_rate:,} Hz')\nprint(f'Deep coverage rate...........: {deep_rate_per_m2:0.2f} Points/m2')\nprint(f'Shallow coverage rate........: {shallow_rate_per_m2:0.2f} Points/m2')\nprint(f'Deep+shallow coverage rate...: {deep_and_shallow_rate_per_m2:0.2f} Points/m2')\n\nBulldog specs extracted from 2024-0205 dataset\nPRF..........................: 20,000 Hz\nScan rate....................: 25 Hz\nSwath width..................: 890 m\nScan Angle (Full)............: 16.61 deg\nFlight Altitude..............: 3048 m      ( 10,000 ft agl )\nGround speed.................: 70 m/s      ( 136 knots )\nArea coverage rate...........: 62,300 m/s  ( 224.3 km2/hour )\nDeep sample rate.............: 20,000 Hz\nShallow sample rate..........: 40,000 Hz\nDeep coverage rate...........: 0.32 Points/m2\nShallow coverage rate........: 0.64 Points/m2\nDeep+shallow coverage rate...: 0.96 Points/m2",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html#area-a-10m",
+    "href": "2024-0205-bulldog.html#area-a-10m",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "Area A 10m",
+    "text": "Area A 10m\n\nta_a = TEST_AREA()\nta_a.area_name              = \"Area A\"\nta_a.title                  = f\"{ta_a.area_name} ~10 meter depth. 1cm bins.\"\nta_a.area_width             = 3\nta_a.area_length            = 70\nta_a.area                   = ta_a.area_width * ta_a.area_length\n\nta_a.czmil                  = DATA()\nta_a.bulldog_shallow        = DATA()\nta_a.bulldog_deep           = DATA()\n\nta_a.czmil.fn               = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/A-10m-czmil.txt'\nta_a.bulldog_deep.fn        = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/A-10m-bulldog-deep.txt'\nta_a.bulldog_shallow.fn     = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/A-10m-bulldog-shallow.txt'\n\ndata( ta_a, ta_a.czmil )\ndata( ta_a, ta_a.bulldog_deep )\ndata( ta_a, ta_a.bulldog_shallow )\n\ngen_plot( ta_a )\nta_a.p.line(ta_a.bins[0:-1],  ta_a.bulldog_deep.hist, legend_label=\"BullDog Deep\",  line_width=2, color='red')\nta_a.p.line( ta_a.bins[0:-1], ta_a.czmil.hist,        legend_label=\"CZMIL\",         line_width=5, color=\"blue\")\n\nshow(ta_a.p)\ngen_all_stats( ta_a )",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html#area-b-10m",
+    "href": "2024-0205-bulldog.html#area-b-10m",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "Area B 10m",
+    "text": "Area B 10m\n\nta_b = TEST_AREA();\nta_b.area_name              = \"Area B\"\nta_b.title                  = f\"{ta_b.area_name} ~10 meter depth. 1cm bins.\"\nta_b.area_width         = 3\nta_b.area_length        = 38.5\nta_b.area               = ta_b.area_width  * ta_b.area_length\n\nta_b.czmil              = DATA()\nta_b.bulldog_deep       = DATA()\nta_b.bulldog_shallow    = DATA()\n\nta_b.czmil.fn           = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/B-10m-czmil.txt'\nta_b.bulldog_deep.fn    = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/B-10m-bulldog-deep.txt'\nta_b.bulldog_shallow.fn = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/B-10m-bulldog-shallow.txt'\n\n\ndata( ta_b, ta_b.czmil )\ndata( ta_b, ta_b.bulldog_deep )\ndata( ta_b, ta_b.bulldog_shallow )\n\n\ngen_plot( ta_b )\nta_b.p.line( ta_b.bins[0:-1], ta_b.czmil.hist,                                  legend_label=\"CZMIL\",           line_width=5, color=\"blue\")\nta_b.p.line(ta_b.bins[0:-1],  ta_b.bulldog_deep.hist+ta_b.bulldog_shallow.hist, legend_label=\"BullDog Deep+Shallow\",    line_width=2, color='red')\n#ta_b.p.line(ta_a.bins[0:-1],  ta_b.bulldog_shallow_hist,                        legend_label=\"BullDog Shallow\", line_width=2, color='magenta')\n#ta_b.p.line(ta_a.bins[0:-1],  ta_b.bulldog.hist,                                legend_label=\"BullDog\",         line_width=2, color='green')\nshow(ta_b.p)\ngen_all_stats( ta_b )",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html#area-c-22m",
+    "href": "2024-0205-bulldog.html#area-c-22m",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "Area C 22m",
+    "text": "Area C 22m\n\nta_c = TEST_AREA();\nta_c.area_name              = \"Area C\"\nta_c.title                  = f\"{ta_c.area_name} ~22 meter depth. 1cm bins.\"\nta_c.area_width             = 3\nta_c.area_length            = 41.1\nta_c.area                   = ta_c.area_width  * ta_c.area_length\nta_c.bins                   = np.linspace(-22.5, -21.5, 100)\n\nta_c.czmil                  = DATA()\nta_c.bulldog_all            = DATA()\n\nta_c.czmil.fn               = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/C-22m-czmil.txt'\nta_c.bulldog_all.fn         = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/C-22m-bulldog-deep.txt'\n\ndata( ta_c, ta_c.czmil )\ndata( ta_c, ta_c.bulldog_all )\n\n#ta_c.bulldog = DATA()\n#data( ta_c, ta_c.bulldog, ta_c.bulldog.fn )\n\ngen_plot( ta_c )\nta_c.p.line( ta_c.bins[0:-1], ta_c.czmil.hist,                                   legend_label=\"CZMIL\",           line_width=5, color=\"blue\")\nta_c.p.line(ta_c.bins[0:-1],  ta_c.bulldog_all.hist, legend_label=\"BullDog Deep\",line_width=5, color='red')\n#ta_b.p.line(ta_a.bins[0:-1],  ta_b.bulldog_shallow_hist,                        legend_label=\"BullDog Shallow\", line_width=2, color='magenta')\n#ta_b.p.line(ta_a.bins[0:-1],  ta_b.bulldog.hist,                                legend_label=\"BullDog\",         line_width=2, color='green')\nshow(ta_c.p)\ngen_all_stats( ta_c )",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "2024-0205-bulldog.html#area-d-30m",
+    "href": "2024-0205-bulldog.html#area-d-30m",
+    "title": "2024-0205 Bulldog Dataset",
+    "section": "Area D 30m",
+    "text": "Area D 30m\n\nta_d = TEST_AREA()\nta_d.area_name              = \"Area D\"\nta_d.title                  = f\"{ta_d.area_name} ~30 meter depth. 1cm bins.\"\nta_d.area_width             = 3\nta_d.area_length            = 71\nta_d.area                   = ta_d.area_width  * ta_d.area_length\nta_d.bins                   = np.linspace(-30.7, -29.7, 100)\n\nta_d.czmil                  = DATA()\nta_d.bulldog_all            = DATA()\n\nta_d.czmil.fn               = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/D-30m-czmil.txt'\nta_d.bulldog_all.fn         = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/D-30m-bulldog-deep.txt'\n\ndata( ta_d, ta_d.czmil )\ndata( ta_d, ta_d.bulldog_all )\n\ngen_plot( ta_d )\nta_d.p.line( ta_d.bins[0:-1], ta_d.czmil.hist,                                   legend_label=\"CZMIL\",           line_width=5, color=\"blue\")\nta_d.p.line(ta_d.bins[0:-1],  ta_d.bulldog_all.hist, legend_label=\"BullDog Deep\",line_width=3, color='red')\n#ta_b.p.line(ta_a.bins[0:-1],  ta_b.bulldog_shallow_hist,                        legend_label=\"BullDog Shallow\", line_width=2, color='magenta')\n#ta_b.p.line(ta_a.bins[0:-1],  ta_b.bulldog.hist,                                legend_label=\"BullDog\",         line_width=2, color='green')\nshow(ta_d.p)\ngen_all_stats( ta_d )",
+    "crumbs": [
+      "2024-0205 Bulldog Dataset"
+    ]
+  },
+  {
+    "objectID": "lidar_tools.html",
+    "href": "lidar_tools.html",
+    "title": "lidar_tools",
+    "section": "",
+    "text": "source\n\nlas2datetime\n\n las2datetime (las_time)\n\nConvert a LAS / LAZ time to utc datetime value.\n\n\n\n\nType\nDetails\n\n\n\n\nlas_time\n\nLAS Time\n\n\nReturns\nobject\nUTC_datetime\n\n\n\n\nczmil_time_stamp      = 153407475.910288                                         # A LAZ raw time stamp from CZMIL\nutc_soe = las2datetime( czmil_time_stamp )\n\n #UTC={dt.datetime.fromtimestamp(utc_soe)}\nprint(\n    f'{czmil_time_stamp=:18.6f}\\n'\n    f'{utc_soe=}\\n'\n    f'{utc_soe.strftime(\"%Y/%m/%d %H:%M:%S.%f\")}') \n\nczmil_time_stamp      = 341842350.167830\nutc_soe = las2datetime( czmil_time_stamp )\n\n# UTC={dt.datetime.fromtimestamp(utc_soe)}\nprint(\n    f'{czmil_time_stamp=:18.6f}\\n'\n    f'{utc_soe=}\\n'\n    f'{utc_soe.strftime(\"%Y/%m/%d %H:%M:%S.%f\")}')\n\nczmil_time_stamp=  153407475.910288\nutc_soe=datetime.datetime(2016, 7, 24, 14, 57, 55, 910288)\n2016/07/24 14:57:55.910288\nczmil_time_stamp=  341842350.167830\nutc_soe=datetime.datetime(2022, 7, 14, 13, 59, 10, 167830)\n2022/07/14 13:59:10.167830\n\n\n\nutc_soe.strftime('%Y/%m/%d %H:%M:%S.%f')\n\n'2022/07/14 13:59:10.167830'\n\n\n\nsource\n\n\nswath_width\n\n swath_width (full_scan_angle_d:float, altitude_ft=None, altitude_m=None)\n\nCompute the scan width give the full scan angle in degrees, and the altitude in either meters or feet. Returns scan width in meters.\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nfull_scan_angle_d\nfloat\n\nFull scan angle in degrees.\n\n\naltitude_ft\nNoneType\nNone\nSensor altitude in feet.\n\n\naltitude_m\nNoneType\nNone\nSensor altitude in meters.\n\n\nReturns\nfloat\n\nReturns the swath width in meters.\n\n\n\n\nprint(swath_width( 16, altitude_ft =10_500 ), \n      swath_width( 16, altitude_m  =3_200 ),\n     )\n\n899.5737459767073 899.4613420953053\n\n\n\nsource\n\n\nDATA\n\n DATA ()\n\nThis class gets populated\n\nsource\n\n\nTEST_AREA\n\n TEST_AREA ()\n\nPresets parameters for analysis. Most of the parameters are presets for Bokeh plots used in the analysis. Additional attributes to define datasets and their related attributes are added after this class is instantiated.\n\nhelp(TEST_AREA)\n\nHelp on class TEST_AREA in module __main__:\n\nclass TEST_AREA(builtins.object)\n |  Presets parameters for analysis. Most of the parameters are presets for Bokeh\n |  plots used in the analysis.  Additional attributes to define datasets and \n |  their related attributes are added after this class is instantiated.\n |  \n |  Methods defined here:\n |  \n |  __init__(self)\n |      Initialize self.  See help(type(self)) for accurate signature.\n |  \n |  ----------------------------------------------------------------------\n |  Data descriptors defined here:\n |  \n |  __dict__\n |      dictionary for instance variables\n |  \n |  __weakref__\n |      list of weak references to the object\n\n\n\n\nta = TEST_AREA()\n\n\nvars( ta )\n\n{'title': 'Title Not set',\n 'y_axis_label': 'not Set',\n 'xaxis_axis_label': 'NAVD88 Depth (m)',\n 'bin_size': 0.01,\n 'width': 700,\n 'height': 400,\n 'axis_axis_label_text_font_style': 'bold',\n 'axis_axis_label_text_font_size': '18pt',\n 'title_text_font_size': '24pt',\n 'title_text_font_style': 'bold',\n 'axis_major_label_text_font_size': '16pt',\n 'axis_major_label_text_font_style': 'bold',\n 'area_width': 0,\n 'area_length': 0,\n 'area': 0,\n 'data_list': [],\n 'ref_mean': None,\n 'colab': False,\n 'density': False,\n 'yaxis_axis_label': 'Number of Depths'}\n\n\n\nsource\n\n\ndata\n\n data (tdf, fn='', name='', ref=False, scale=1.0, offset=0.0,\n       color='blue', width=3)\n\nReads the ASCII data file cls.fn, stores the data in cls.df, and generates stats on the cls.['ELEVATION'] data. It also generates a histogram, cls.hist, based on tdf.bin_size.\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\ntdf\n\n\nThe parent TEST_AREA class.\n\n\nfn\nstr\n\nData file name\n\n\nname\nstr\n\nName of this data set\n\n\nref\nbool\nFalse\nUse as the reference dataset or not.\n\n\nscale\nfloat\n1.0\nScale factor.\n\n\noffset\nfloat\n0.0\nOffset to apply.\n\n\ncolor\nstr\nblue\n\n\n\nwidth\nint\n3\nline width\n\n\n\n\nsource\n\n\nprofile_distance\n\n profile_distance (df, lat='lat', lon='lon', dist='dist')\n\nGenerate distance values between the first Lat/Lon point and each other Lat/Lon point in the DataFrame.\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\ndf\n\n\nDataframe or numpy array containing latitude, Longititude, and Elevation columns\n\n\nlat\nstr\nlat\nThe name of the latitude column\n\n\nlon\nstr\nlon\nThe name of the Longititude column\n\n\ndist\nstr\ndist\nComputed distance value\n\n\nReturns\nobject\n\nNew dataframe with a new column for distance\n\n\n\nExample usage:\n\ndata_path               = '../data/atm/'\natm_file                = 'profile-1-atm-xyz.zip'\n\n\natm = pd.read_csv(data_path+atm_file, names=[\"lon\", \"lat\", \"elev\"])\ndisplay(atm)\n\n\n\n\n\n\n\n\n\nlon\nlat\nelev\n\n\n\n\n0\n-49.478853\n69.031902\n623.736\n\n\n1\n-49.478861\n69.031816\n624.403\n\n\n2\n-49.478869\n69.031728\n623.600\n\n\n3\n-49.478871\n69.031641\n623.747\n\n\n4\n-49.478873\n69.031553\n623.072\n\n\n...\n...\n...\n...\n\n\n137\n-49.479172\n69.025193\n616.221\n\n\n138\n-49.479169\n69.025107\n617.262\n\n\n139\n-49.479169\n69.025023\n617.074\n\n\n140\n-49.479186\n69.024852\n617.871\n\n\n141\n-49.479179\n69.024766\n617.835\n\n\n\n\n142 rows × 3 columns\n\n\n\n\n\nrv = profile_distance( atm )\ndisplay( rv )\n\n\n\n\n\n\n\n\n\nlon\nlat\nelev\ndist\n\n\n\n\n0\n-49.478853\n69.031902\n623.736\n0.000000\n\n\n1\n-49.478861\n69.031816\n624.403\n9.568074\n\n\n2\n-49.478869\n69.031728\n623.600\n19.358416\n\n\n3\n-49.478871\n69.031641\n623.747\n29.030753\n\n\n4\n-49.478873\n69.031553\n623.072\n38.815242\n\n\n...\n...\n...\n...\n...\n\n\n137\n-49.479172\n69.025193\n616.221\n746.115807\n\n\n138\n-49.479169\n69.025107\n617.262\n755.675221\n\n\n139\n-49.479169\n69.025023\n617.074\n765.014330\n\n\n140\n-49.479186\n69.024852\n617.871\n784.037327\n\n\n141\n-49.479179\n69.024766\n617.835\n793.594151\n\n\n\n\n142 rows × 4 columns\n\n\n\n\n\nx = rv['dist']\ny = rv['elev']\nbkp = wwbk.ww_figure()\nbkp.fig.scatter( x, y)\nshow( bkp.fig )\n\n    \n    \n        \n        Loading BokehJS ...\n    \n\n\n\n\n\n\n  \n\n\n\n\n\n\nsource\n\n\ngen_plot\n\n gen_plot (test_area)\n\nGenerate a plot figure, and store it as an attribute in test-area. Configure it with preferred settings.\n\n\n\n\nDetails\n\n\n\n\ntest_area\nGenerate and configure a Bokeh plot.\n\n\n\n\nsource\n\n\nplot_hists\n\n plot_hists (obj)\n\nPlot histograms of each dataset.\n\n\n\n\nDetails\n\n\n\n\nobj\nData object.\n\n\n\n\nsource\n\n\nshow_attributes\n\n show_attributes (obj)\n\nPrintout atrributes of obj. obj is a class DATA.\n\nsource\n\n\ngen_stats\n\n gen_stats (data_obj=None, header:bool=False, area=0)\n\nPrint the statistics for the given elevation data from data_obj. Setting header=True will cause it to print a header describing the columns before printing the results.\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\ndata_obj\nNoneType\nNone\nThe data obj\n\n\nheader\nbool\nFalse\nPrint a header showing the column names.\n\n\narea\nint\n0\nThe area (in meters) that the values came from. Used to computed points per meter.\n\n\nReturns\ntuple\n\nTuple containing: mean, std, min, max, number_of_points\n\n\n\n\nsource\n\n\ngen_all_stats\n\n gen_all_stats (ta:object)\n\nGenerate stats for all of the datasets within the ta class.\n\n\n\n\nType\nDetails\n\n\n\n\nta\nobject\nObject of class TEST_AREA.\n\n\n\n\nif 'google.colab' in str(get_ipython()):\n    data_path = '/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/'\nelse:\n    data_path = \"../work/data/buldog/\"\na10bdd    = data_path + \"A-10m-bulldog-deep.txt\"\na10bds    = data_path + \"A-10m-bulldog-shallow.txt\"\nb10dd     = data_path + \"B-10m-bulldog-deep.txt\"\nb10ds     = data_path + \"B-10m-bulldog-shallow.txt\"\nc22bdd    = data_path + \"C-22m-bulldog-deep.txt\"\nd30bdd    = data_path + \"D-30m-bulldog-deep.txt\"\na10cz     = data_path + \"A-10m-czmil.txt\"\nb10cz     = data_path + \"B-10m-czmil.txt\"\nc22cz     = data_path + \"C-22m-czmil.txt\"\nd30cz     = data_path + \"D-30m-czmil.txt\"\n\n\nbd_a = TEST_AREA()\nbd_a.area_name      = \"Area B\"\nbd_a.title          = f\"{bd_a.area_name} ~10 meter depth. 1cm bins.\"\nbd_a.area_width     = 3\nbd_a.area_length    = 70\nbd_a.area           = bd_a.area_width * bd_a.area_length\n\nbd_a.bin_size       = 0.02\nbd_a.density        = True\nif bd_a.colab:\n    bd_a.data_path  = \"/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/\"\nelse:\n    bd_a.data_path      = \"../data/bulldog/\"\n    \nwidth = 3\n#data( bd_a, offset=26.0, fn = bd_a.data_path + \"A-30m-sonar.txt\",          color = \"red\",   width = width, name = \"SONAR\", ref=True )\ndata( bd_a, offset=26.0, fn = bd_a.data_path + \"B-10m-czmil.txt\",           color = \"green\", width = width, name = \"CZMIL\", ref=True  )\ndata( bd_a, offset=26.0, fn = bd_a.data_path + \"B-10m-bulldog-deep.txt\",    color = \"blue\",  width = width, name = \"Bulldog-D\",       )\ndata( bd_a, offset=26.0, fn = bd_a.data_path + \"B-10m-bulldog-shallow.txt\", color = \"Red\",   width = width, name = \"Bulldog-S\",       )\ngen_all_stats( bd_a )\nplot_hists( bd_a )\n\n\nThe test area is 210.0 square meters. (3 by 70 meters)\n\n                        Ref            Std                                 Total\n    Data Source  Ref    Dif  Mean(m)  Dev(m)   Min(m)    Max(m)   P2P(m)  Points  Points/m  Scale  Offset(m)\n          CZMIL &lt;--   0.000 16.231    0.053   16.076    16.434    0.358     878     4.181  1.0000 26.000\n      Bulldog-D       0.037 16.193    0.089   15.991    16.482    0.491      58     0.276  1.0000 26.000\n      Bulldog-S       0.046 16.184    0.073   16.022    16.296    0.274      35     0.167  1.0000 26.000\n\n\n    \n    \n        \n        Loading BokehJS ...\n    \n\n\n\n\n\n\n  \n\n\n\n\n\n\nhx4_a = TEST_AREA()\nhx4_a.area_name      = \"Area A\"\nhx4_a.title          = f\"{hx4_a.area_name} ~30 meter depth. 1cm bins.\"\nhx4_a.area_width     = 2\nhx4_a.area_length    = 45\nhx4_a.area           = hx4_a.area_width * hx4_a.area_length\n\nhx4_a.bin_size       = 0.01\nhx4_a.data_path      = \"../data/ch4x/\"\nwidth = 3\ndata( hx4_a, offset=26.0, fn = hx4_a.data_path + \"A-30m-sonar.txt\", color = \"red\",   width = width, name = \"SONAR\", ref=True       )\ndata( hx4_a, offset=26.0, fn = hx4_a.data_path + \"A-30m-czmil.txt\", color = \"green\", width = width, name = \"CZMIL\"                 )\ndata( hx4_a, offset=26.0, fn = hx4_a.data_path + \"A-30m-hx4.txt\",   color = \"blue\",  width = width, name = \"Hawkeye 4x\", scale=1.0175 )\n\ngen_all_stats( hx4_a )\nplot_hists( hx4_a )\n\n\nThe test area is 90.0 square meters. (2 by 45 meters)\n\n                        Ref            Std                                 Total\n    Data Source  Ref    Dif  Mean(m)  Dev(m)   Min(m)    Max(m)   P2P(m)  Points  Points/m  Scale  Offset(m)\n          SONAR &lt;--   0.000 -29.928    0.087  -30.161   -29.739    0.422     684     7.600  1.0000 26.000\n          CZMIL       0.070 -29.998    0.206  -30.621   -29.470    1.151     168     1.867  1.0000 26.000\n     Hawkeye 4x       0.016 -29.944    0.099  -30.220   -29.701    0.519     294     3.267  1.0175 26.000\n\n\n    \n    \n        \n        Loading BokehJS ...",
+    "crumbs": [
+      "lidar_tools"
+    ]
+  },
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "core",
+    "section": "",
+    "text": "source\n\nfoo\n\n foo ()",
+    "crumbs": [
+      "core"
+    ]
+  },
+  {
+    "objectID": "ww_bokeh.html",
+    "href": "ww_bokeh.html",
+    "title": "ww_Bokeh Tools",
+    "section": "",
+    "text": "source\n\nww_figure\n\n ww_figure (width=700, height=400)\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\nwidth\nint\n700\nWidth of plot output (pixels)\n\n\nheight\nint\n400\nHeight of plot output (pixels)\n\n\n\n\ndata_path = '../data/atm/'\natm_fn    = 'profile-1-atm-xyz.zip'\n\n\nimport pandas as pd\n\n\natm = pd.read_csv(data_path+atm_fn, names=[\"lon\", \"lat\", \"elev\"])\n\n\np = ww_figure()\n\n    \n    \n        \n        Loading BokehJS ...\n    \n\n\n\n\n\n\np.fig.title.text       = \"ATM melt Pond Lidar Data\"\np.fig.xaxis.axis_label = \"Distance along the Profile (m)\"\np.fig.yaxis.axis_label = \"Elevation (m)\"\n\n\nx = atm['lat']\ny = atm['elev']\njunk = p.fig.scatter( x, y )\n\n\nshow( p.fig )\n\n\n  \n\n\n\n\n\n\np.fig.title.text = \"New Title XXXXXXXXXXX\"\np.fig.xaxis.axis_label = \"X Axis label XXXXXXXXXXXX\"",
+    "crumbs": [
+      "ww_Bokeh Tools"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "lidar_review_tools",
+    "section": "",
+    "text": "import lidar_review_tools.lidar_tools  as lt\nfrom lidar_review_tools import lidar_tools",
+    "crumbs": [
+      "lidar_review_tools"
+    ]
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "lidar_review_tools",
+    "section": "Install",
+    "text": "Install\nClone the repository to your computer and then:\n\npip install lidar_review_tools\n\nor\n\npip install -e .",
+    "crumbs": [
+      "lidar_review_tools"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "lidar_review_tools",
+    "section": "How to use",
+    "text": "How to use\nGenerate histograms for 30m depth data from a SONAR, CZMIL, and Bulldog.\n\nhx4_a = lt.TEST_AREA()\nhx4_a.area_name      = \"Area A\"\nhx4_a.area_width     = 2\nhx4_a.area_length    = 45\nhx4_a.area           = hx4_a.area_width * hx4_a.area_length\n\nhx4_a.bin_size       = 0.02\nhx4_a.density        = True\nhx4_a.data_path      = \"../data/ch4x/\"\nwidth = 3\nlt.data( hx4_a, offset=26.0, fn = hx4_a.data_path + \"A-30m-sonar.txt\", color = \"red\",   width = width, name = \"SONAR\", ref=True    )\nlt.data( hx4_a, offset=26.0, fn = hx4_a.data_path + \"A-30m-czmil.txt\", color = \"green\", width = width, name = \"CZMIL\"              )\nlt.data( hx4_a, offset=26.0, fn = hx4_a.data_path + \"A-30m-hx4.txt\",   color = \"blue\",  width = width, name = \"Hawkeye 4x\"         )\nlt.gen_all_stats( hx4_a )\nhx4_a.title          = (f\"{hx4_a.area_name} \"\n                        f\"{ abs(hx4_a.data_list[0].mean):3.1f} meter depth.\"\n                        f\"{hx4_a.bin_size*100:4.1f}cm bins.\")\nlt.plot_hists( hx4_a )\n\n\nThe test area is 90.0 square meters. (2 by 45 meters)\n\n                        Ref            Std                                 Total\n    Data Source  Ref    Dif  Mean(m)  Dev(m)   Min(m)    Max(m)   P2P(m)  Points  Points/m  Scale  Offset(m)\n          SONAR &lt;--   0.000 -29.928    0.087  -30.161   -29.739    0.422     684     7.600  1.0000 26.000\n          CZMIL       0.070 -29.998    0.206  -30.621   -29.470    1.151     168     1.867  1.0000 26.000\n     Hawkeye 4x      -0.499 -29.429    0.097  -29.700   -29.190    0.510     294     3.267  1.0000 26.000\n\n\n    \n    \n        \n        Loading BokehJS ...",
+    "crumbs": [
+      "lidar_review_tools"
+    ]
+  }
+]

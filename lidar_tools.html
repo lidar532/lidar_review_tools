@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Tools to examine bathy lidar data extracted using Global Mapper.">
+
+<title>lidar_review_tools - lidar_tools</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="lidar_review_tools - lidar_tools">
+<meta property="og:description" content="Tools to examine bathy lidar data extracted using Global Mapper.">
+<meta property="og:site_name" content="lidar_review_tools">
+<meta name="twitter:title" content="lidar_review_tools - lidar_tools">
+<meta name="twitter:description" content="Tools to examine bathy lidar data extracted using Global Mapper.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">lidar_review_tools</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./lidar_tools.html">lidar_tools</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">lidar_review_tools</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2024-0205-bulldog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2024-0205 Bulldog Dataset</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lidar_tools.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">lidar_tools</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./detect_lidar_water_surface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Detect water surface.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ww_bokeh.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ww_Bokeh Tools</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#las2datetime" id="toc-las2datetime" class="nav-link active" data-scroll-target="#las2datetime">las2datetime</a></li>
+  <li><a href="#swath_width" id="toc-swath_width" class="nav-link" data-scroll-target="#swath_width">swath_width</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">DATA</a></li>
+  <li><a href="#test_area" id="toc-test_area" class="nav-link" data-scroll-target="#test_area">TEST_AREA</a></li>
+  <li><a href="#data-1" id="toc-data-1" class="nav-link" data-scroll-target="#data-1">data</a></li>
+  <li><a href="#profile_distance" id="toc-profile_distance" class="nav-link" data-scroll-target="#profile_distance">profile_distance</a></li>
+  <li><a href="#gen_plot" id="toc-gen_plot" class="nav-link" data-scroll-target="#gen_plot">gen_plot</a></li>
+  <li><a href="#plot_hists" id="toc-plot_hists" class="nav-link" data-scroll-target="#plot_hists">plot_hists</a></li>
+  <li><a href="#show_attributes" id="toc-show_attributes" class="nav-link" data-scroll-target="#show_attributes">show_attributes</a></li>
+  <li><a href="#gen_stats" id="toc-gen_stats" class="nav-link" data-scroll-target="#gen_stats">gen_stats</a></li>
+  <li><a href="#gen_all_stats" id="toc-gen_all_stats" class="nav-link" data-scroll-target="#gen_all_stats">gen_all_stats</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/lidar532/lidar_review_tools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">lidar_tools</h1>
+</div>
+
+<div>
+  <div class="description">
+    Tools to examine bathy lidar data extracted using Global Mapper.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L30" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="las2datetime" class="level3">
+<h3 class="anchored" data-anchor-id="las2datetime">las2datetime</h3>
+<blockquote class="blockquote">
+<pre><code> las2datetime (las_time)</code></pre>
+</blockquote>
+<p>Convert a LAS / LAZ time to utc datetime value.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>las_time</td>
+<td></td>
+<td>LAS Time</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>object</strong></td>
+<td><strong>UTC_datetime</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="133dba8b-c0bb-466c-b160-436b56d2c170" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>czmil_time_stamp      <span class="op">=</span> <span class="fl">153407475.910288</span>                                         <span class="co"># A LAZ raw time stamp from CZMIL</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>utc_soe <span class="op">=</span> las2datetime( czmil_time_stamp )</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a> <span class="co">#UTC={dt.datetime.fromtimestamp(utc_soe)}</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>czmil_time_stamp<span class="op">=</span><span class="sc">:18.6f}</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>utc_soe<span class="op">=</span><span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>utc_soe<span class="sc">.</span>strftime(<span class="st">"%Y/%m/</span><span class="sc">%d</span><span class="st"> %H:%M:%S.</span><span class="sc">%f</span><span class="st">"</span>)<span class="sc">}</span><span class="ss">'</span>) </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>czmil_time_stamp      <span class="op">=</span> <span class="fl">341842350.167830</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>utc_soe <span class="op">=</span> las2datetime( czmil_time_stamp )</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># UTC={dt.datetime.fromtimestamp(utc_soe)}</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>czmil_time_stamp<span class="op">=</span><span class="sc">:18.6f}</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>utc_soe<span class="op">=</span><span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>utc_soe<span class="sc">.</span>strftime(<span class="st">"%Y/%m/</span><span class="sc">%d</span><span class="st"> %H:%M:%S.</span><span class="sc">%f</span><span class="st">"</span>)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>czmil_time_stamp=  153407475.910288
+utc_soe=datetime.datetime(2016, 7, 24, 14, 57, 55, 910288)
+2016/07/24 14:57:55.910288
+czmil_time_stamp=  341842350.167830
+utc_soe=datetime.datetime(2022, 7, 14, 13, 59, 10, 167830)
+2022/07/14 13:59:10.167830</code></pre>
+</div>
+</div>
+<div id="d9cb72ba-312f-4575-95af-585485cff58c" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>utc_soe.strftime(<span class="st">'%Y/%m/</span><span class="sc">%d</span><span class="st"> %H:%M:%S.</span><span class="sc">%f</span><span class="st">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>'2022/07/14 13:59:10.167830'</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="swath_width" class="level3">
+<h3 class="anchored" data-anchor-id="swath_width">swath_width</h3>
+<blockquote class="blockquote">
+<pre><code> swath_width (full_scan_angle_d:float, altitude_ft=None, altitude_m=None)</code></pre>
+</blockquote>
+<p>Compute the scan width give the full scan angle in degrees, and the altitude in either meters or feet. Returns scan width in meters.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>full_scan_angle_d</td>
+<td>float</td>
+<td></td>
+<td>Full scan angle in degrees.</td>
+</tr>
+<tr class="even">
+<td>altitude_ft</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Sensor altitude in feet.</td>
+</tr>
+<tr class="odd">
+<td>altitude_m</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Sensor altitude in meters.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>float</strong></td>
+<td></td>
+<td><strong>Returns the swath width in meters.</strong></td>
+</tr>
+</tbody>
+</table>
+<div id="4c5a8832-f538-4b7f-aacc-4c35120b89fe" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(swath_width( <span class="dv">16</span>, altitude_ft <span class="op">=</span><span class="dv">10_500</span> ), </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>      swath_width( <span class="dv">16</span>, altitude_m  <span class="op">=</span><span class="dv">3_200</span> ),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>     )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>899.5737459767073 899.4613420953053</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L64" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="data" class="level3">
+<h3 class="anchored" data-anchor-id="data">DATA</h3>
+<blockquote class="blockquote">
+<pre><code> DATA ()</code></pre>
+</blockquote>
+<p>This class gets populated</p>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L72" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="test_area" class="level3">
+<h3 class="anchored" data-anchor-id="test_area">TEST_AREA</h3>
+<blockquote class="blockquote">
+<pre><code> TEST_AREA ()</code></pre>
+</blockquote>
+<p>Presets parameters for analysis. Most of the parameters are presets for Bokeh plots used in the analysis. Additional attributes to define datasets and their related attributes are added after this class is instantiated.</p>
+<div id="052d98e9-d1e1-43b9-b4df-1d8dbddfc5de" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(TEST_AREA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Help on class TEST_AREA in module __main__:
+
+class TEST_AREA(builtins.object)
+ |  Presets parameters for analysis. Most of the parameters are presets for Bokeh
+ |  plots used in the analysis.  Additional attributes to define datasets and 
+ |  their related attributes are added after this class is instantiated.
+ |  
+ |  Methods defined here:
+ |  
+ |  __init__(self)
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables
+ |  
+ |  __weakref__
+ |      list of weak references to the object
+</code></pre>
+</div>
+</div>
+<div id="dc9cee1d-0dd4-4690-8c0a-f9b6ee1d46d7" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ta <span class="op">=</span> TEST_AREA()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8da357e7-3c95-4961-b9e2-4a4c2574b7e4" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">vars</span>( ta )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>{'title': 'Title Not set',
+ 'y_axis_label': 'not Set',
+ 'xaxis_axis_label': 'NAVD88 Depth (m)',
+ 'bin_size': 0.01,
+ 'width': 700,
+ 'height': 400,
+ 'axis_axis_label_text_font_style': 'bold',
+ 'axis_axis_label_text_font_size': '18pt',
+ 'title_text_font_size': '24pt',
+ 'title_text_font_style': 'bold',
+ 'axis_major_label_text_font_size': '16pt',
+ 'axis_major_label_text_font_style': 'bold',
+ 'area_width': 0,
+ 'area_length': 0,
+ 'area': 0,
+ 'data_list': [],
+ 'ref_mean': None,
+ 'colab': False,
+ 'density': False,
+ 'yaxis_axis_label': 'Number of Depths'}</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L107" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="data-1" class="level3">
+<h3 class="anchored" data-anchor-id="data-1">data</h3>
+<blockquote class="blockquote">
+<pre><code> data (tdf, fn='', name='', ref=False, scale=1.0, offset=0.0,
+       color='blue', width=3)</code></pre>
+</blockquote>
+<p>Reads the ASCII data file <code>cls.fn</code>, stores the data in <code>cls.df</code>, and generates stats on the <code>cls.['ELEVATION']</code> data. It also generates a histogram, <code>cls.hist</code>, based on <code>tdf.bin_size</code>.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tdf</td>
+<td></td>
+<td></td>
+<td>The parent <a href="https://lidar532.github.io/lidar_review_tools/lidar_tools.html#test_area"><code>TEST_AREA</code></a> class.</td>
+</tr>
+<tr class="even">
+<td>fn</td>
+<td>str</td>
+<td></td>
+<td>Data file name</td>
+</tr>
+<tr class="odd">
+<td>name</td>
+<td>str</td>
+<td></td>
+<td>Name of this data set</td>
+</tr>
+<tr class="even">
+<td>ref</td>
+<td>bool</td>
+<td>False</td>
+<td>Use as the reference dataset or not.</td>
+</tr>
+<tr class="odd">
+<td>scale</td>
+<td>float</td>
+<td>1.0</td>
+<td>Scale factor.</td>
+</tr>
+<tr class="even">
+<td>offset</td>
+<td>float</td>
+<td>0.0</td>
+<td>Offset to apply.</td>
+</tr>
+<tr class="odd">
+<td>color</td>
+<td>str</td>
+<td>blue</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>width</td>
+<td>int</td>
+<td>3</td>
+<td>line width</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L149" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="profile_distance" class="level3">
+<h3 class="anchored" data-anchor-id="profile_distance">profile_distance</h3>
+<blockquote class="blockquote">
+<pre><code> profile_distance (df, lat='lat', lon='lon', dist='dist')</code></pre>
+</blockquote>
+<p>Generate distance values between the first Lat/Lon point and each other Lat/Lon point in the DataFrame.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>df</td>
+<td></td>
+<td></td>
+<td>Dataframe or numpy array containing latitude, Longititude, and Elevation columns</td>
+</tr>
+<tr class="even">
+<td>lat</td>
+<td>str</td>
+<td>lat</td>
+<td>The name of the latitude column</td>
+</tr>
+<tr class="odd">
+<td>lon</td>
+<td>str</td>
+<td>lon</td>
+<td>The name of the Longititude column</td>
+</tr>
+<tr class="even">
+<td>dist</td>
+<td>str</td>
+<td>dist</td>
+<td>Computed distance value</td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>object</strong></td>
+<td></td>
+<td><strong>New dataframe with a new column for distance</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Example usage:</p>
+<div id="e8b7d38f-8945-4b63-b965-1c5b967d7cc0" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data_path               <span class="op">=</span> <span class="st">'../data/atm/'</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>atm_file                <span class="op">=</span> <span class="st">'profile-1-atm-xyz.zip'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="21d8f02f-da05-4834-9ab2-c1ed48191544" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>atm <span class="op">=</span> pd.read_csv(data_path<span class="op">+</span>atm_file, names<span class="op">=</span>[<span class="st">"lon"</span>, <span class="st">"lat"</span>, <span class="st">"elev"</span>])</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>display(atm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">lon</th>
+<th data-quarto-table-cell-role="th">lat</th>
+<th data-quarto-table-cell-role="th">elev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>-49.478853</td>
+<td>69.031902</td>
+<td>623.736</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>-49.478861</td>
+<td>69.031816</td>
+<td>624.403</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>-49.478869</td>
+<td>69.031728</td>
+<td>623.600</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>-49.478871</td>
+<td>69.031641</td>
+<td>623.747</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>-49.478873</td>
+<td>69.031553</td>
+<td>623.072</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">137</td>
+<td>-49.479172</td>
+<td>69.025193</td>
+<td>616.221</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">138</td>
+<td>-49.479169</td>
+<td>69.025107</td>
+<td>617.262</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">139</td>
+<td>-49.479169</td>
+<td>69.025023</td>
+<td>617.074</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">140</td>
+<td>-49.479186</td>
+<td>69.024852</td>
+<td>617.871</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">141</td>
+<td>-49.479179</td>
+<td>69.024766</td>
+<td>617.835</td>
+</tr>
+</tbody>
+</table>
+
+<p>142 rows × 3 columns</p>
+</div>
+</div>
+</div>
+</div>
+<div id="6cc735ef-f7b4-4df6-ad69-b398ad0387cd" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> profile_distance( atm )</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>display( rv )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">lon</th>
+<th data-quarto-table-cell-role="th">lat</th>
+<th data-quarto-table-cell-role="th">elev</th>
+<th data-quarto-table-cell-role="th">dist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>-49.478853</td>
+<td>69.031902</td>
+<td>623.736</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>-49.478861</td>
+<td>69.031816</td>
+<td>624.403</td>
+<td>9.568074</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>-49.478869</td>
+<td>69.031728</td>
+<td>623.600</td>
+<td>19.358416</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>-49.478871</td>
+<td>69.031641</td>
+<td>623.747</td>
+<td>29.030753</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>-49.478873</td>
+<td>69.031553</td>
+<td>623.072</td>
+<td>38.815242</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">137</td>
+<td>-49.479172</td>
+<td>69.025193</td>
+<td>616.221</td>
+<td>746.115807</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">138</td>
+<td>-49.479169</td>
+<td>69.025107</td>
+<td>617.262</td>
+<td>755.675221</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">139</td>
+<td>-49.479169</td>
+<td>69.025023</td>
+<td>617.074</td>
+<td>765.014330</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">140</td>
+<td>-49.479186</td>
+<td>69.024852</td>
+<td>617.871</td>
+<td>784.037327</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">141</td>
+<td>-49.479179</td>
+<td>69.024766</td>
+<td>617.835</td>
+<td>793.594151</td>
+</tr>
+</tbody>
+</table>
+
+<p>142 rows × 4 columns</p>
+</div>
+</div>
+</div>
+</div>
+<div id="8654f443-b172-481d-a8d6-ac8a9bd1b2fd" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> rv[<span class="st">'dist'</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> rv[<span class="st">'elev'</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>bkp <span class="op">=</span> wwbk.ww_figure()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>bkp.fig.scatter( x, y)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>show( bkp.fig )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+    <style>
+        .bk-notebook-logo {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAOkSURBVDiNjZRtaJVlGMd/1/08zzln5zjP1LWcU9N0NkN8m2CYjpgQYQXqSs0I84OLIC0hkEKoPtiH3gmKoiJDU7QpLgoLjLIQCpEsNJ1vqUOdO7ppbuec5+V+rj4ctwzd8IIbbi6u+8f1539dt3A78eXC7QizUF7gyV1fD1Yqg4JWz84yffhm0qkFqBogB9rM8tZdtwVsPUhWhGcFJngGeWrPzHm5oaMmkfEg1usvLFyc8jLRqDOMru7AyC8saQr7GG7f5fvDeH7Ej8CM66nIF+8yngt6HWaKh7k49Soy9nXurCi1o3qUbS3zWfrYeQDTB/Qj6kX6Ybhw4B+bOYoLKCC9H3Nu/leUTZ1JdRWkkn2ldcCamzrcf47KKXdAJllSlxAOkRgyHsGC/zRday5Qld9DyoM4/q/rUoy/CXh3jzOu3bHUVZeU+DEn8FInkPBFlu3+nW3Nw0mk6vCDiWg8CeJaxEwuHS3+z5RgY+YBR6V1Z1nxSOfoaPa4LASWxxdNp+VWTk7+4vzaou8v8PN+xo+KY2xsw6une2frhw05CTYOmQvsEhjhWjn0bmXPjpE1+kplmmkP3suftwTubK9Vq22qKmrBhpY4jvd5afdRA3wGjFAgcnTK2s4hY0/GPNIb0nErGMCRxWOOX64Z8RAC4oCXdklmEvcL8o0BfkNK4lUg9HTl+oPlQxdNo3Mg4Nv175e/1LDGzZen30MEjRUtmXSfiTVu1kK8W4txyV6BMKlbgk3lMwYCiusNy9fVfvvwMxv8Ynl6vxoByANLTWplvuj/nF9m2+PDtt1eiHPBr1oIfhCChQMBw6Aw0UulqTKZdfVvfG7VcfIqLG9bcldL/+pdWTLxLUy8Qq38heUIjh4XlzZxzQm19lLFlr8vdQ97rjZVOLf8nclzckbcD4wxXMidpX30sFd37Fv/GtwwhzhxGVAprjbg0gCAEeIgwCZyTV2Z1REEW8O4py0wsjeloKoMr6iCY6dP92H6Vw/oTyICIthibxjm/DfN9lVz8IqtqKYLUXfoKVMVQVVJOElGjrnnUt9T9wbgp8AyYKaGlqingHZU/uG2NTZSVqwHQTWkx9hxjkpWDaCg6Ckj5qebgBVbT3V3NNXMSiWSDdGV3hrtzla7J+duwPOToIg42ChPQOQjspnSlp1V+Gjdged7+8UN5CRAV7a5EdFNwCjEaBR27b3W890TE7g24NAP/mMDXRWrGoFPQI9ls/MWO2dWFAar/xcOIImbbpA3zgAAAABJRU5ErkJggg==);
+        }
+    </style>
+    <div>
+        <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
+        <span id="a3863bc8-4cff-48c2-985c-a377aef1f181">Loading BokehJS ...</span>
+    </div>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  const force = true;
+
+  if (typeof root._bokeh_onload_callbacks === "undefined" || force === true) {
+    root._bokeh_onload_callbacks = [];
+    root._bokeh_is_loading = undefined;
+  }
+
+const JS_MIME_TYPE = 'application/javascript';
+  const HTML_MIME_TYPE = 'text/html';
+  const EXEC_MIME_TYPE = 'application/vnd.bokehjs_exec.v0+json';
+  const CLASS_NAME = 'output_bokeh rendered_html';
+
+  /**
+   * Render data to the DOM node
+   */
+  function render(props, node) {
+    const script = document.createElement("script");
+    node.appendChild(script);
+  }
+
+  /**
+   * Handle when an output is cleared or removed
+   */
+  function handleClearOutput(event, handle) {
+    function drop(id) {
+      const view = Bokeh.index.get_by_id(id)
+      if (view != null) {
+        view.model.document.clear()
+        Bokeh.index.delete(view)
+      }
+    }
+
+    const cell = handle.cell;
+
+    const id = cell.output_area._bokeh_element_id;
+    const server_id = cell.output_area._bokeh_server_id;
+
+    // Clean up Bokeh references
+    if (id != null) {
+      drop(id)
+    }
+
+    if (server_id !== undefined) {
+      // Clean up Bokeh references
+      const cmd_clean = "from bokeh.io.state import curstate; print(curstate().uuid_to_server['" + server_id + "'].get_sessions()[0].document.roots[0]._id)";
+      cell.notebook.kernel.execute(cmd_clean, {
+        iopub: {
+          output: function(msg) {
+            const id = msg.content.text.trim()
+            drop(id)
+          }
+        }
+      });
+      // Destroy server and session
+      const cmd_destroy = "import bokeh.io.notebook as ion; ion.destroy_server('" + server_id + "')";
+      cell.notebook.kernel.execute(cmd_destroy);
+    }
+  }
+
+  /**
+   * Handle when a new output is added
+   */
+  function handleAddOutput(event, handle) {
+    const output_area = handle.output_area;
+    const output = handle.output;
+
+    // limit handleAddOutput to display_data with EXEC_MIME_TYPE content only
+    if ((output.output_type != "display_data") || (!Object.prototype.hasOwnProperty.call(output.data, EXEC_MIME_TYPE))) {
+      return
+    }
+
+    const toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+
+    if (output.metadata[EXEC_MIME_TYPE]["id"] !== undefined) {
+      toinsert[toinsert.length - 1].firstChild.textContent = output.data[JS_MIME_TYPE];
+      // store reference to embed id on output_area
+      output_area._bokeh_element_id = output.metadata[EXEC_MIME_TYPE]["id"];
+    }
+    if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+      const bk_div = document.createElement("div");
+      bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+      const script_attrs = bk_div.children[0].attributes;
+      for (let i = 0; i < script_attrs.length; i++) {
+        toinsert[toinsert.length - 1].firstChild.setAttribute(script_attrs[i].name, script_attrs[i].value);
+        toinsert[toinsert.length - 1].firstChild.textContent = bk_div.children[0].textContent
+      }
+      // store reference to server id on output_area
+      output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+    }
+  }
+
+  function register_renderer(events, OutputArea) {
+
+    function append_mime(data, metadata, element) {
+      // create a DOM node to render to
+      const toinsert = this.create_output_subarea(
+        metadata,
+        CLASS_NAME,
+        EXEC_MIME_TYPE
+      );
+      this.keyboard_manager.register_events(toinsert);
+      // Render to node
+      const props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+      render(props, toinsert[toinsert.length - 1]);
+      element.append(toinsert);
+      return toinsert
+    }
+
+    /* Handle when an output is cleared or removed */
+    events.on('clear_output.CodeCell', handleClearOutput);
+    events.on('delete.Cell', handleClearOutput);
+
+    /* Handle when a new output is added */
+    events.on('output_added.OutputArea', handleAddOutput);
+
+    /**
+     * Register the mime type and append_mime function with output_area
+     */
+    OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+      /* Is output safe? */
+      safe: true,
+      /* Index of renderer in `output_area.display_order` */
+      index: 0
+    });
+  }
+
+  // register the mime type if in Jupyter Notebook environment and previously unregistered
+  if (root.Jupyter !== undefined) {
+    const events = require('base/js/events');
+    const OutputArea = require('notebook/js/outputarea').OutputArea;
+
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  }
+  if (typeof (root._bokeh_timeout) === "undefined" || force === true) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  const NB_LOAD_WARNING = {'data': {'text/html':
+     "<div style='background-color: #fdd'>\n"+
+     "<p>\n"+
+     "BokehJS does not appear to have successfully loaded. If loading BokehJS from CDN, this \n"+
+     "may be due to a slow or bad network connection. Possible fixes:\n"+
+     "</p>\n"+
+     "<ul>\n"+
+     "<li>re-rerun `output_notebook()` to attempt to load from CDN again, or</li>\n"+
+     "<li>use INLINE resources instead, as so:</li>\n"+
+     "</ul>\n"+
+     "<code>\n"+
+     "from bokeh.resources import INLINE\n"+
+     "output_notebook(resources=INLINE)\n"+
+     "</code>\n"+
+     "</div>"}};
+
+  function display_loaded() {
+    const el = document.getElementById("a3863bc8-4cff-48c2-985c-a377aef1f181");
+    if (el != null) {
+      el.textContent = "BokehJS is loading...";
+    }
+    if (root.Bokeh !== undefined) {
+      if (el != null) {
+        el.textContent = "BokehJS " + root.Bokeh.version + " successfully loaded.";
+      }
+    } else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(display_loaded, 100)
+    }
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+
+    root._bokeh_onload_callbacks.push(callback);
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls == null || js_urls.length === 0) {
+      run_callbacks();
+      return null;
+    }
+    console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    root._bokeh_is_loading = css_urls.length + js_urls.length;
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+
+    function on_error(url) {
+      console.error("failed to load " + url);
+    }
+
+    for (let i = 0; i < css_urls.length; i++) {
+      const url = css_urls[i];
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }
+
+    for (let i = 0; i < js_urls.length; i++) {
+      const url = js_urls[i];
+      const element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.3.2.min.js"];
+  const css_urls = [];
+
+  const inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {
+    }
+  ];
+
+  function run_inline_js() {
+    if (root.Bokeh !== undefined || force === true) {
+          for (let i = 0; i < inline_js.length; i++) {
+      inline_js[i].call(root, root.Bokeh);
+    }
+if (force === true) {
+        display_loaded();
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    } else if (force !== true) {
+      const cell = $(document.getElementById("a3863bc8-4cff-48c2-985c-a377aef1f181")).parents('.cell').data().cell;
+      cell.output_area.append_execute_result(NB_LOAD_WARNING)
+    }
+  }
+
+  if (root._bokeh_is_loading === 0) {
+    console.debug("Bokeh: BokehJS loaded, going straight to plotting");
+    run_inline_js();
+  } else {
+    load_libs(css_urls, js_urls, function() {
+      console.debug("Bokeh: BokehJS plotting callback run at", now());
+      run_inline_js();
+    });
+  }
+}(window));
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+  <div id="d048b15c-093d-4df2-aefb-c0274c8d725a" data-root-id="p1001" style="display: contents;"></div>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+(function(root) {
+  function embed_document(root) {
+  const docs_json = {"18888bcd-d867-4e5e-a3b3-3ba78e1c3cc9":{"version":"3.3.2","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p1001","attributes":{"width":700,"height":400,"x_range":{"type":"object","name":"DataRange1d","id":"p1002"},"y_range":{"type":"object","name":"DataRange1d","id":"p1003"},"x_scale":{"type":"object","name":"LinearScale","id":"p1010"},"y_scale":{"type":"object","name":"LinearScale","id":"p1011"},"title":{"type":"object","name":"Title","id":"p1008"},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1039","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1033","attributes":{"selected":{"type":"object","name":"Selection","id":"p1034","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1035"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"AAAAAAAAAABCDkqP2iIjQMIA+yXBWzNAe3bpad8HPUDIpHLbWWhDQAV8KP1TTUhAWXLTYsoGTUCnkXKX4u9QQM4eOIorTFNAFYVTCMa2VUDKS20ULw1YQKDqUPu/alpANqIiBCXcXECgyJfE7E5fQGMNmIkR3WBAxnCREMgSYkAvMrqw/0tjQDvUbYobhWRAVa+M0CS+ZUCPB3H9sVkWQM/w1LJC92ZAXJafFgkYLkBFAignkiVoQI04HGXPZWlAdSLJkTASQUDuBD/145tqQIZ0DQ5zzEVAQ8iKXEbRa0AljoK22pRKQGvI5mRTCm1A/bUrTkNdT0CI8yuDZ0NuQMWgbVLx9lFADkaAGvN4b0AyV/+tulVwQN09QI3utlZAIFqT82/wcEARRsTrABRZQIk6Nkq7jnFAiZ8q+mF4W0Acl8ZIVityQARFvELlzl1AFYREX3rLckDmh41JaxVgQDt7Lw0KaHNAuguktxBEYUDJBwKzzwJ0QPWfOurAcmJAZidb8KWddEDO7Zs+5qBjQAEXQqQnzGRAABvn7qvYdUAE77qyf3N2QEbBzDz/KGdA7dqTOIYMd0Dr4+FgV1toQPdY7r6MpXdArfefq0WCaUBVc2Ue2rBqQNXfjt/a22tAvMvvfXlyeUDdRUTYagptQOpBcVdrC3pA142umnI1bkBBRabHCWRvQAbBG+4BS3BAkrCh8zHicEA1fFj+HXF8QKi+LFtoeXFA7E6plSAMfUBYPKvVSAtyQJFTRj9yonJARi53Vuo5c0BqaT2fctV+QF/U62gd0XNAmdotjhNwf0DyXQ5QSGh0QOxlQcLJAoBAqT2NGmxOgEB4RYvYJ6V1QPGc/BS2lnVAPyrx8SsudkBbhNhCNNV2QA4BfwsKM4FAIXwgnbR+gUCdFsr9YMqBQDyzxKYMpHhAsRutJcsWgkAibq7E+zx5QNZSYFIprYJARzJzYH1bekAFzqFt3PiCQMVdgDdrRINAXQ76uOOQg0CUBDh619qDQDUADKxTJ4RAAQ5cMehyhEDHU3rGbep9QAsw2GqGvoRAcGnGMN2PfkCq+6cAJgqFQPZMFfBqJX9ApEAb1t1UhUDhT/ymS65/QN7u1W9eoYVA2/tDYuDthUAtaDUBcXaAQEk1+GBqOoZAceTt9su7gEA/PvN89IaGQA6qQ4ZfCIFAJ5+IT33ThkD7uZ938lSBQCo3UjMGIIdAjthQy1mhgUD2IFXB6u2BQDoch8jTuYdAsY3HoVs7gkCDegRwIgiIQA7owginiIJAA9eCFatUiEBcpPW92teCQOo+GHf4oohAoMmD2Yojg0Ci0QyWgu+IQEwq/PbbcINAKZUDEk++g0Bzxr6d/AmEQNUgVciAVYRAupKkhRGihEAwcIcrpO6EQFBQ0J4KO4VAjR9NopiHhUDwrxDBtB+GQLZhxWpIbIZA0fIVUre4hkABVX3EUQWHQBf4EiztUIdAutEv2madh0BalC5ZHeiHQG7w6nFMgIhA9Z5B0sDMiEA="},"shape":[142],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"2c73U+N9g0BOYhBYOYODQM3MzMzMfINA5dAi2/l9g0B/arx0k3iDQClcj8L1c4NAukkMAit4g0ArhxbZzmyDQKJFtvP9aYNAAAAAAABkg0A730+Nl2SDQMl2vp8aZYNAukkMAitgg0C+nxov3ViDQDm0yHa+WINAfT81Xrpag0CwcmiR7VWDQLx0kxgETYNAL90kBoFLg0D2KFyPwoKDQDVeukkMRYNAUI2XbhJ+g0AnMQisHE+DQLByaJHtQoNAEFg5tMh8g0Av3SQGgT+DQPYoXI/CdYNAc2iR7Xw8g0CJQWDl0HWDQBsv3SQGOINANV66SQx3g0CBlUOLbDCDQHE9CtejaYNAkxgEVg4sg0DByqFFtimDQGQ730+NZ4NAcT0K16Mqg0DLoUW282GDQKrx0k1iJINAi2zn+6lig0CBlUOLbBiDQOkmMQisXINAmG4Sg8ALg0DRItv5flmDQM/3U+OlAoNA2c73U+NXg0DfT42XbgGDQKabxCCwV4NAdZMYBFb7gkC8dJMYBFWDQH0/NV66SoNA9P3UeOnvgkD6fmq8dOyCQO58PzVeSYNAkxgEVg7ugkC28/3UeE6DQPYoXI/C7IJAvHSTGARDg0Ce76fGS0GDQJqZmZmZPINAnu+nxkvogkAIrBxaZDiDQCuHFtnO6IJAWmQ7308xg0DXo3A9CiyDQJhuEoPAKYNAuB6F61Eqg0CkcD0K1+2CQI2XbhKDJYNA46WbxCDpgkArhxbZzhiDQAwCK4cWEYNASOF6FK4Dg0Db+X5qvO+CQBsv3SQGAINARrbz/dTwgkBI4XoUrvyCQHsUrkfh9oJAw/UoXI/zgkDufD81XhuDQMHKoUW28YJAi2zn+6nsgkBMN4lBYBuDQNv5fmq8+4JA6SYxCKz+gkCsHFpkOwKDQBfZzvdTG4NA2/l+arwDg0Ce76fGSxuDQI/C9ShcC4NAVg4tsp3ogkA1XrpJDA+DQFyPwvUoE4NAPzVeukkXg0DZzvdT4x2DQA4tsp3vHoNAw/UoXI8ig0DVeOkmMe6CQIPAyqFFJYNAxSCwcmgbg0BWDi2ynSaDQFCNl24SG4NA7nw/NV4tg0C8dJMYBPGCQI/C9ShcMYNAaJHtfD8zg0BzaJHtfBuDQGiR7Xw/OINAbxKDwMr2gkBOYhBYOTiDQG3n+6nx+YJAokW28/09g0Ce76fGS/2CQH9qvHSTQINA30+Nl24Bg0CwcmiR7QODQFCNl24SSoNA8KfGSzcFg0CJQWDl0EmDQC2yne+nCYNAAiuHFtlOg0AGgZVDixuDQAAAAAAAToNAj8L1KFwRg0C0yHa+n1GDQNejcD0KFoNAsHJoke0cg0DVeOkmMR2DQMUgsHJoIINAhetRuB4jg0DRItv5fiSDQB1aZDvfKoNAy6FFtvMvg0C8dJMYBDWDQFyPwvUoOoNAK4cW2c47g0Cyne+nxj+DQFTjpZvEQYNAarx0kxhKg0A730+Nl0iDQIcW2c73ToNASOF6FK5Og0A="},"shape":[142],"dtype":"float64","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1040","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1041"}}},"glyph":{"type":"object","name":"Scatter","id":"p1036","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":{"type":"value","value":"#1f77b4"},"fill_color":{"type":"value","value":"#1f77b4"}}},"nonselection_glyph":{"type":"object","name":"Scatter","id":"p1037","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.1},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.1},"hatch_alpha":{"type":"value","value":0.1}}},"muted_glyph":{"type":"object","name":"Scatter","id":"p1038","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":{"type":"value","value":"#1f77b4"},"line_alpha":{"type":"value","value":0.2},"fill_color":{"type":"value","value":"#1f77b4"},"fill_alpha":{"type":"value","value":0.2},"hatch_alpha":{"type":"value","value":0.2}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1009","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1022"},{"type":"object","name":"WheelZoomTool","id":"p1023","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p1024","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1025","attributes":{"syncable":false,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1030"},{"type":"object","name":"ResetTool","id":"p1031"},{"type":"object","name":"HelpTool","id":"p1032"}]}},"left":[{"type":"object","name":"LinearAxis","id":"p1017","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1018","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1019"},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1020"}}}],"below":[{"type":"object","name":"LinearAxis","id":"p1012","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1013","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1014"},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1015"}}}],"center":[{"type":"object","name":"Grid","id":"p1016","attributes":{"axis":{"id":"p1012"}}},{"type":"object","name":"Grid","id":"p1021","attributes":{"dimension":1,"axis":{"id":"p1017"}}}]}}]}};
+  const render_items = [{"docid":"18888bcd-d867-4e5e-a3b3-3ba78e1c3cc9","roots":{"p1001":"d048b15c-093d-4df2-aefb-c0274c8d725a"},"root_ids":["p1001"]}];
+  root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
+  }
+  if (root.Bokeh !== undefined) {
+    embed_document(root);
+  } else {
+    let attempts = 0;
+    const timer = setInterval(function(root) {
+      if (root.Bokeh !== undefined) {
+        clearInterval(timer);
+        embed_document(root);
+      } else {
+        attempts++;
+        if (attempts > 100) {
+          clearInterval(timer);
+          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+        }
+      }
+    }, 10, root)
+  }
+})(window);
+</script>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L169" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gen_plot" class="level3">
+<h3 class="anchored" data-anchor-id="gen_plot">gen_plot</h3>
+<blockquote class="blockquote">
+<pre><code> gen_plot (test_area)</code></pre>
+</blockquote>
+<p>Generate a plot figure, and store it as an attribute in <code>test-area</code>. Configure it with preferred settings.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>test_area</td>
+<td>Generate and configure a Bokeh plot.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L192" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plot_hists" class="level3">
+<h3 class="anchored" data-anchor-id="plot_hists">plot_hists</h3>
+<blockquote class="blockquote">
+<pre><code> plot_hists (obj)</code></pre>
+</blockquote>
+<p>Plot histograms of each dataset.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>obj</td>
+<td>Data object.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L212" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="show_attributes" class="level3">
+<h3 class="anchored" data-anchor-id="show_attributes">show_attributes</h3>
+<blockquote class="blockquote">
+<pre><code> show_attributes (obj)</code></pre>
+</blockquote>
+<p>Printout atrributes of <code>obj</code>. <code>obj</code> is a class <a href="https://lidar532.github.io/lidar_review_tools/lidar_tools.html#data"><code>DATA</code></a>.</p>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L227" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gen_stats" class="level3">
+<h3 class="anchored" data-anchor-id="gen_stats">gen_stats</h3>
+<blockquote class="blockquote">
+<pre><code> gen_stats (data_obj=None, header:bool=False, area=0)</code></pre>
+</blockquote>
+<p>Print the statistics for the given elevation data from data_obj. Setting header=True will cause it to print a header describing the columns before printing the results.</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>data_obj</td>
+<td>NoneType</td>
+<td>None</td>
+<td>The data obj</td>
+</tr>
+<tr class="even">
+<td>header</td>
+<td>bool</td>
+<td>False</td>
+<td>Print a header showing the column names.</td>
+</tr>
+<tr class="odd">
+<td>area</td>
+<td>int</td>
+<td>0</td>
+<td>The area (in meters) that the values came from. Used to computed points per meter.</td>
+</tr>
+<tr class="even">
+<td><strong>Returns</strong></td>
+<td><strong>tuple</strong></td>
+<td></td>
+<td><strong>Tuple containing: mean, std, min, max, number_of_points</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/lidar532/lidar_review_tools/blob/main/lidar_review_tools/lidar_tools.py#L282" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gen_all_stats" class="level3">
+<h3 class="anchored" data-anchor-id="gen_all_stats">gen_all_stats</h3>
+<blockquote class="blockquote">
+<pre><code> gen_all_stats (ta:object)</code></pre>
+</blockquote>
+<p>Generate stats for all of the datasets within the <code>ta</code> class.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ta</td>
+<td>object</td>
+<td>Object of class <a href="https://lidar532.github.io/lidar_review_tools/lidar_tools.html#test_area"><code>TEST_AREA</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<div id="377dfa6c-bd71-4841-b77b-baded4b78b7d" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'google.colab'</span> <span class="kw">in</span> <span class="bu">str</span>(get_ipython()):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    data_path <span class="op">=</span> <span class="st">'/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/'</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    data_path <span class="op">=</span> <span class="st">"../work/data/buldog/"</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>a10bdd    <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"A-10m-bulldog-deep.txt"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>a10bds    <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"A-10m-bulldog-shallow.txt"</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>b10dd     <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"B-10m-bulldog-deep.txt"</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>b10ds     <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"B-10m-bulldog-shallow.txt"</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>c22bdd    <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"C-22m-bulldog-deep.txt"</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>d30bdd    <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"D-30m-bulldog-deep.txt"</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>a10cz     <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"A-10m-czmil.txt"</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>b10cz     <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"B-10m-czmil.txt"</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>c22cz     <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"C-22m-czmil.txt"</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>d30cz     <span class="op">=</span> data_path <span class="op">+</span> <span class="st">"D-30m-czmil.txt"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ac6a6112-9e27-4a3f-aa71-abb20092e28f" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>bd_a <span class="op">=</span> TEST_AREA()</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>bd_a.area_name      <span class="op">=</span> <span class="st">"Area B"</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>bd_a.title          <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>bd_a<span class="sc">.</span>area_name<span class="sc">}</span><span class="ss"> ~10 meter depth. 1cm bins."</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>bd_a.area_width     <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>bd_a.area_length    <span class="op">=</span> <span class="dv">70</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>bd_a.area           <span class="op">=</span> bd_a.area_width <span class="op">*</span> bd_a.area_length</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>bd_a.bin_size       <span class="op">=</span> <span class="fl">0.02</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>bd_a.density        <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> bd_a.colab:</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    bd_a.data_path  <span class="op">=</span> <span class="st">"/content/drive/MyDrive/Projects/2024-0209-NOAA-RSD-Bulldog/"</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    bd_a.data_path      <span class="op">=</span> <span class="st">"../data/bulldog/"</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co">#data( bd_a, offset=26.0, fn = bd_a.data_path + "A-30m-sonar.txt",          color = "red",   width = width, name = "SONAR", ref=True )</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>data( bd_a, offset<span class="op">=</span><span class="fl">26.0</span>, fn <span class="op">=</span> bd_a.data_path <span class="op">+</span> <span class="st">"B-10m-czmil.txt"</span>,           color <span class="op">=</span> <span class="st">"green"</span>, width <span class="op">=</span> width, name <span class="op">=</span> <span class="st">"CZMIL"</span>, ref<span class="op">=</span><span class="va">True</span>  )</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>data( bd_a, offset<span class="op">=</span><span class="fl">26.0</span>, fn <span class="op">=</span> bd_a.data_path <span class="op">+</span> <span class="st">"B-10m-bulldog-deep.txt"</span>,    color <span class="op">=</span> <span class="st">"blue"</span>,  width <span class="op">=</span> width, name <span class="op">=</span> <span class="st">"Bulldog-D"</span>,       )</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>data( bd_a, offset<span class="op">=</span><span class="fl">26.0</span>, fn <span class="op">=</span> bd_a.data_path <span class="op">+</span> <span class="st">"B-10m-bulldog-shallow.txt"</span>, color <span class="op">=</span> <span class="st">"Red"</span>,   width <span class="op">=</span> width, name <span class="op">=</span> <span class="st">"Bulldog-S"</span>,       )</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>gen_all_stats( bd_a )</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>plot_hists( bd_a )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+The test area is 210.0 square meters. (3 by 70 meters)
+
+                        Ref            Std                                 Total
+    Data Source  Ref    Dif  Mean(m)  Dev(m)   Min(m)    Max(m)   P2P(m)  Points  Points/m  Scale  Offset(m)
+          CZMIL &lt;--   0.000 16.231    0.053   16.076    16.434    0.358     878     4.181  1.0000 26.000
+      Bulldog-D       0.037 16.193    0.089   15.991    16.482    0.491      58     0.276  1.0000 26.000
+      Bulldog-S       0.046 16.184    0.073   16.022    16.296    0.274      35     0.167  1.0000 26.000</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+    <style>
+        .bk-notebook-logo {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAOkSURBVDiNjZRtaJVlGMd/1/08zzln5zjP1LWcU9N0NkN8m2CYjpgQYQXqSs0I84OLIC0hkEKoPtiH3gmKoiJDU7QpLgoLjLIQCpEsNJ1vqUOdO7ppbuec5+V+rj4ctwzd8IIbbi6u+8f1539dt3A78eXC7QizUF7gyV1fD1Yqg4JWz84yffhm0qkFqBogB9rM8tZdtwVsPUhWhGcFJngGeWrPzHm5oaMmkfEg1usvLFyc8jLRqDOMru7AyC8saQr7GG7f5fvDeH7Ej8CM66nIF+8yngt6HWaKh7k49Soy9nXurCi1o3qUbS3zWfrYeQDTB/Qj6kX6Ybhw4B+bOYoLKCC9H3Nu/leUTZ1JdRWkkn2ldcCamzrcf47KKXdAJllSlxAOkRgyHsGC/zRday5Qld9DyoM4/q/rUoy/CXh3jzOu3bHUVZeU+DEn8FInkPBFlu3+nW3Nw0mk6vCDiWg8CeJaxEwuHS3+z5RgY+YBR6V1Z1nxSOfoaPa4LASWxxdNp+VWTk7+4vzaou8v8PN+xo+KY2xsw6une2frhw05CTYOmQvsEhjhWjn0bmXPjpE1+kplmmkP3suftwTubK9Vq22qKmrBhpY4jvd5afdRA3wGjFAgcnTK2s4hY0/GPNIb0nErGMCRxWOOX64Z8RAC4oCXdklmEvcL8o0BfkNK4lUg9HTl+oPlQxdNo3Mg4Nv175e/1LDGzZen30MEjRUtmXSfiTVu1kK8W4txyV6BMKlbgk3lMwYCiusNy9fVfvvwMxv8Ynl6vxoByANLTWplvuj/nF9m2+PDtt1eiHPBr1oIfhCChQMBw6Aw0UulqTKZdfVvfG7VcfIqLG9bcldL/+pdWTLxLUy8Qq38heUIjh4XlzZxzQm19lLFlr8vdQ97rjZVOLf8nclzckbcD4wxXMidpX30sFd37Fv/GtwwhzhxGVAprjbg0gCAEeIgwCZyTV2Z1REEW8O4py0wsjeloKoMr6iCY6dP92H6Vw/oTyICIthibxjm/DfN9lVz8IqtqKYLUXfoKVMVQVVJOElGjrnnUt9T9wbgp8AyYKaGlqingHZU/uG2NTZSVqwHQTWkx9hxjkpWDaCg6Ckj5qebgBVbT3V3NNXMSiWSDdGV3hrtzla7J+duwPOToIg42ChPQOQjspnSlp1V+Gjdged7+8UN5CRAV7a5EdFNwCjEaBR27b3W890TE7g24NAP/mMDXRWrGoFPQI9ls/MWO2dWFAar/xcOIImbbpA3zgAAAABJRU5ErkJggg==);
+        }
+    </style>
+    <div>
+        <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
+        <span id="dc4afb42-8cd1-4887-a066-5c1a0f660bde">Loading BokehJS ...</span>
+    </div>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  const force = true;
+
+  if (typeof root._bokeh_onload_callbacks === "undefined" || force === true) {
+    root._bokeh_onload_callbacks = [];
+    root._bokeh_is_loading = undefined;
+  }
+
+const JS_MIME_TYPE = 'application/javascript';
+  const HTML_MIME_TYPE = 'text/html';
+  const EXEC_MIME_TYPE = 'application/vnd.bokehjs_exec.v0+json';
+  const CLASS_NAME = 'output_bokeh rendered_html';
+
+  /**
+   * Render data to the DOM node
+   */
+  function render(props, node) {
+    const script = document.createElement("script");
+    node.appendChild(script);
+  }
+
+  /**
+   * Handle when an output is cleared or removed
+   */
+  function handleClearOutput(event, handle) {
+    function drop(id) {
+      const view = Bokeh.index.get_by_id(id)
+      if (view != null) {
+        view.model.document.clear()
+        Bokeh.index.delete(view)
+      }
+    }
+
+    const cell = handle.cell;
+
+    const id = cell.output_area._bokeh_element_id;
+    const server_id = cell.output_area._bokeh_server_id;
+
+    // Clean up Bokeh references
+    if (id != null) {
+      drop(id)
+    }
+
+    if (server_id !== undefined) {
+      // Clean up Bokeh references
+      const cmd_clean = "from bokeh.io.state import curstate; print(curstate().uuid_to_server['" + server_id + "'].get_sessions()[0].document.roots[0]._id)";
+      cell.notebook.kernel.execute(cmd_clean, {
+        iopub: {
+          output: function(msg) {
+            const id = msg.content.text.trim()
+            drop(id)
+          }
+        }
+      });
+      // Destroy server and session
+      const cmd_destroy = "import bokeh.io.notebook as ion; ion.destroy_server('" + server_id + "')";
+      cell.notebook.kernel.execute(cmd_destroy);
+    }
+  }
+
+  /**
+   * Handle when a new output is added
+   */
+  function handleAddOutput(event, handle) {
+    const output_area = handle.output_area;
+    const output = handle.output;
+
+    // limit handleAddOutput to display_data with EXEC_MIME_TYPE content only
+    if ((output.output_type != "display_data") || (!Object.prototype.hasOwnProperty.call(output.data, EXEC_MIME_TYPE))) {
+      return
+    }
+
+    const toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+
+    if (output.metadata[EXEC_MIME_TYPE]["id"] !== undefined) {
+      toinsert[toinsert.length - 1].firstChild.textContent = output.data[JS_MIME_TYPE];
+      // store reference to embed id on output_area
+      output_area._bokeh_element_id = output.metadata[EXEC_MIME_TYPE]["id"];
+    }
+    if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+      const bk_div = document.createElement("div");
+      bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+      const script_attrs = bk_div.children[0].attributes;
+      for (let i = 0; i < script_attrs.length; i++) {
+        toinsert[toinsert.length - 1].firstChild.setAttribute(script_attrs[i].name, script_attrs[i].value);
+        toinsert[toinsert.length - 1].firstChild.textContent = bk_div.children[0].textContent
+      }
+      // store reference to server id on output_area
+      output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+    }
+  }
+
+  function register_renderer(events, OutputArea) {
+
+    function append_mime(data, metadata, element) {
+      // create a DOM node to render to
+      const toinsert = this.create_output_subarea(
+        metadata,
+        CLASS_NAME,
+        EXEC_MIME_TYPE
+      );
+      this.keyboard_manager.register_events(toinsert);
+      // Render to node
+      const props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+      render(props, toinsert[toinsert.length - 1]);
+      element.append(toinsert);
+      return toinsert
+    }
+
+    /* Handle when an output is cleared or removed */
+    events.on('clear_output.CodeCell', handleClearOutput);
+    events.on('delete.Cell', handleClearOutput);
+
+    /* Handle when a new output is added */
+    events.on('output_added.OutputArea', handleAddOutput);
+
+    /**
+     * Register the mime type and append_mime function with output_area
+     */
+    OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+      /* Is output safe? */
+      safe: true,
+      /* Index of renderer in `output_area.display_order` */
+      index: 0
+    });
+  }
+
+  // register the mime type if in Jupyter Notebook environment and previously unregistered
+  if (root.Jupyter !== undefined) {
+    const events = require('base/js/events');
+    const OutputArea = require('notebook/js/outputarea').OutputArea;
+
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  }
+  if (typeof (root._bokeh_timeout) === "undefined" || force === true) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  const NB_LOAD_WARNING = {'data': {'text/html':
+     "<div style='background-color: #fdd'>\n"+
+     "<p>\n"+
+     "BokehJS does not appear to have successfully loaded. If loading BokehJS from CDN, this \n"+
+     "may be due to a slow or bad network connection. Possible fixes:\n"+
+     "</p>\n"+
+     "<ul>\n"+
+     "<li>re-rerun `output_notebook()` to attempt to load from CDN again, or</li>\n"+
+     "<li>use INLINE resources instead, as so:</li>\n"+
+     "</ul>\n"+
+     "<code>\n"+
+     "from bokeh.resources import INLINE\n"+
+     "output_notebook(resources=INLINE)\n"+
+     "</code>\n"+
+     "</div>"}};
+
+  function display_loaded() {
+    const el = document.getElementById("dc4afb42-8cd1-4887-a066-5c1a0f660bde");
+    if (el != null) {
+      el.textContent = "BokehJS is loading...";
+    }
+    if (root.Bokeh !== undefined) {
+      if (el != null) {
+        el.textContent = "BokehJS " + root.Bokeh.version + " successfully loaded.";
+      }
+    } else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(display_loaded, 100)
+    }
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+
+    root._bokeh_onload_callbacks.push(callback);
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls == null || js_urls.length === 0) {
+      run_callbacks();
+      return null;
+    }
+    console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    root._bokeh_is_loading = css_urls.length + js_urls.length;
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+
+    function on_error(url) {
+      console.error("failed to load " + url);
+    }
+
+    for (let i = 0; i < css_urls.length; i++) {
+      const url = css_urls[i];
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }
+
+    for (let i = 0; i < js_urls.length; i++) {
+      const url = js_urls[i];
+      const element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.3.2.min.js"];
+  const css_urls = [];
+
+  const inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {
+    }
+  ];
+
+  function run_inline_js() {
+    if (root.Bokeh !== undefined || force === true) {
+          for (let i = 0; i < inline_js.length; i++) {
+      inline_js[i].call(root, root.Bokeh);
+    }
+if (force === true) {
+        display_loaded();
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    } else if (force !== true) {
+      const cell = $(document.getElementById("dc4afb42-8cd1-4887-a066-5c1a0f660bde")).parents('.cell').data().cell;
+      cell.output_area.append_execute_result(NB_LOAD_WARNING)
+    }
+  }
+
+  if (root._bokeh_is_loading === 0) {
+    console.debug("Bokeh: BokehJS loaded, going straight to plotting");
+    run_inline_js();
+  } else {
+    load_libs(css_urls, js_urls, function() {
+      console.debug("Bokeh: BokehJS plotting callback run at", now());
+      run_inline_js();
+    });
+  }
+}(window));
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+  <div id="d2d0ecc8-d7a6-4fb2-9055-bce55eaae1db" data-root-id="p1001" style="display: contents;"></div>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+(function(root) {
+  function embed_document(root) {
+  const docs_json = {"897a7c5c-b6ed-4fd9-8520-dd265b3ea373":{"version":"3.3.2","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p1001","attributes":{"width":700,"height":400,"x_range":{"type":"object","name":"DataRange1d","id":"p1002"},"y_range":{"type":"object","name":"DataRange1d","id":"p1003","attributes":{"start":0}},"x_scale":{"type":"object","name":"LinearScale","id":"p1011"},"y_scale":{"type":"object","name":"LinearScale","id":"p1012"},"title":{"type":"object","name":"Title","id":"p1004","attributes":{"text":"Area B ~10 meter depth. 1cm bins.","text_font_size":"24pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1041","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1035","attributes":{"selected":{"type":"object","name":"Selection","id":"p1036","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1037"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"+n5qvHQTMEDZ2NjY2BgwQLgyR/U8HjBAl4y1EaEjMEB25iMuBSkwQFVAkkppLjBANJoAZ80zMEAT9G6DMTkwQPJN3Z+VPjBA0KdLvPlDMECvAbrYXUkwQI5bKPXBTjBAbbWWESZUMEBMDwUuilkwQCtpc0ruXjBACsPhZlJkMEDpHFCDtmkwQA=="},"shape":[17],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"PJ+LfrTE1D/abtG9DiffP9dBF4nDf/Y/+xNdseGaAkBMEl1rtB8MQDBZdMb/EBZAQMxFs/9rHUDntOh1w9odQOaLLvtKuB5A781F+SznE0Cyb9FgpWQKQPP6/y14jvw/PJ+LfrTE5D+mKbqo8LDLPzyfi360xMQ/CFp0aZZO0T+mKbqo8LCrPw=="},"shape":[17],"dtype":"float64","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1042","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1043"}}},"glyph":{"type":"object","name":"Line","id":"p1038","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"green","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1039","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"green","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1040","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"green","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1050","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1047","attributes":{"selected":{"type":"object","name":"Selection","id":"p1048","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1049"},"data":{"type":"map"}}},"view":{"type":"object","name":"CDSView","id":"p1051","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1052"}}},"glyph":{"type":"object","name":"VSpan","id":"p1046","attributes":{"x":{"type":"value","value":16.23064578587699},"line_color":{"type":"value","value":"green"},"line_alpha":{"type":"value","value":0.5}}}}},{"type":"object","name":"GlyphRenderer","id":"p1059","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1053","attributes":{"selected":{"type":"object","name":"Selection","id":"p1054","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1055"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"CKwcWmT7L0Dv7u7u7gIwQNqHz7ArCDBAxCCwcmgNMECvuZA0pRIwQJpScfbhFzBAhetRuB4dMEBwhDJ6WyIwQFsdEzyYJzBARrbz/dQsMEAwT9S/ETIwQBvotIFONzBABoGVQ4s8MEDxGXYFyEEwQNyyVscERzBAxks3iUFMMECx5BdLflEwQJx9+Ay7VjBAhxbZzvdbMEByr7mQNGEwQF1ImlJxZjBASOF6FK5rMEAyelvW6nAwQB0TPJgndjBA"},"shape":[24],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"+n8dCdv3+j8AAAAAAAAAACGFHQnb9+o/+n8dCdv3CkD6fx0J2/fqPwAAAAAAAAAA/R/WRuQ5FED9H9ZG5DkUQPp/HQnb9wpAfdT5p9+YF0D6fx0J2/f6P/0f1kbkORRA+n8dCdv3CkD9b7Ll6NoQQDVzsuXo2hBA+n8dCdv3CkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPp/HQnb9+o/"},"shape":[24],"dtype":"float64","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1060","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1061"}}},"glyph":{"type":"object","name":"Line","id":"p1056","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"blue","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1057","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"blue","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1058","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"blue","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1067","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1064","attributes":{"selected":{"type":"object","name":"Selection","id":"p1065","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1066"},"data":{"type":"map"}}},"view":{"type":"object","name":"CDSView","id":"p1068","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1069"}}},"glyph":{"type":"object","name":"VSpan","id":"p1063","attributes":{"x":{"type":"value","value":16.193275862068965},"line_color":{"type":"value","value":"blue"},"line_alpha":{"type":"value","value":0.5}}}}},{"type":"object","name":"GlyphRenderer","id":"p1076","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1070","attributes":{"selected":{"type":"object","name":"Selection","id":"p1071","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1072"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"EoPAyqEFMEDj09cWBwswQLQk72JsEDBAhnUGr9EVMEBXxh37NhswQCgXNUecIDBA+WdMkwEmMEDLuGPfZiswQJwJeyvMMDBAbVqSdzE2MEA+q6nDljswQBD8wA/8QDBA4UzYW2FGMEA="},"shape":[13],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"T7nzUXOw9T9PufNRc7D1P0q181FzsPU/T7nzUXOwFUBPufNRc7AFQPvKdn1WRBBASrXzUXOw9T/7ynZ9VkQgQE+581FzsPU/T7nzUXOwFUCconAmkBwbQPvKdn1WRBBA+8p2fVZEEEA="},"shape":[13],"dtype":"float64","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1077","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1078"}}},"glyph":{"type":"object","name":"Line","id":"p1073","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"Red","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1074","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"Red","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1075","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"Red","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1084","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1081","attributes":{"selected":{"type":"object","name":"Selection","id":"p1082","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1083"},"data":{"type":"map"}}},"view":{"type":"object","name":"CDSView","id":"p1085","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1086"}}},"glyph":{"type":"object","name":"VSpan","id":"p1080","attributes":{"x":{"type":"value","value":16.1844},"line_color":{"type":"value","value":"Red"},"line_alpha":{"type":"value","value":0.5}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1010","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1023"},{"type":"object","name":"WheelZoomTool","id":"p1024","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p1025","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1026","attributes":{"syncable":false,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1031"},{"type":"object","name":"ResetTool","id":"p1032"},{"type":"object","name":"HelpTool","id":"p1033"},{"type":"object","name":"HoverTool","id":"p1034","attributes":{"renderers":"auto","tooltips":[["Depth","$x"]]}}]}},"left":[{"type":"object","name":"LinearAxis","id":"p1018","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1019","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1020"},"axis_label":"Number of Depths","axis_label_text_font_size":"18pt","axis_label_text_font_style":"bold","major_label_policy":{"type":"object","name":"AllLabels","id":"p1021"},"major_label_text_font_size":"16pt","major_label_text_font_style":"bold"}}],"below":[{"type":"object","name":"LinearAxis","id":"p1013","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1014","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1015"},"axis_label":"NAVD88 Depth (m)","axis_label_text_font_size":"18pt","axis_label_text_font_style":"bold","major_label_policy":{"type":"object","name":"AllLabels","id":"p1016"},"major_label_text_font_size":"16pt","major_label_text_font_style":"bold"}}],"center":[{"type":"object","name":"Grid","id":"p1017","attributes":{"axis":{"id":"p1013"}}},{"type":"object","name":"Grid","id":"p1022","attributes":{"dimension":1,"axis":{"id":"p1018"}}},{"type":"object","name":"Legend","id":"p1044","attributes":{"items":[{"type":"object","name":"LegendItem","id":"p1045","attributes":{"label":{"type":"value","value":"CZMIL"},"renderers":[{"id":"p1041"}]}},{"type":"object","name":"LegendItem","id":"p1062","attributes":{"label":{"type":"value","value":"Bulldog-D"},"renderers":[{"id":"p1059"}]}},{"type":"object","name":"LegendItem","id":"p1079","attributes":{"label":{"type":"value","value":"Bulldog-S"},"renderers":[{"id":"p1076"}]}}]}}]}}]}};
+  const render_items = [{"docid":"897a7c5c-b6ed-4fd9-8520-dd265b3ea373","roots":{"p1001":"d2d0ecc8-d7a6-4fb2-9055-bce55eaae1db"},"root_ids":["p1001"]}];
+  root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
+  }
+  if (root.Bokeh !== undefined) {
+    embed_document(root);
+  } else {
+    let attempts = 0;
+    const timer = setInterval(function(root) {
+      if (root.Bokeh !== undefined) {
+        clearInterval(timer);
+        embed_document(root);
+      } else {
+        attempts++;
+        if (attempts > 100) {
+          clearInterval(timer);
+          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+        }
+      }
+    }, 10, root)
+  }
+})(window);
+</script>
+</div>
+</div>
+<div id="acfdd2a8-c7fd-46f4-8827-4d245074b881" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>hx4_a <span class="op">=</span> TEST_AREA()</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>hx4_a.area_name      <span class="op">=</span> <span class="st">"Area A"</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>hx4_a.title          <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>hx4_a<span class="sc">.</span>area_name<span class="sc">}</span><span class="ss"> ~30 meter depth. 1cm bins."</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>hx4_a.area_width     <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>hx4_a.area_length    <span class="op">=</span> <span class="dv">45</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>hx4_a.area           <span class="op">=</span> hx4_a.area_width <span class="op">*</span> hx4_a.area_length</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>hx4_a.bin_size       <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>hx4_a.data_path      <span class="op">=</span> <span class="st">"../data/ch4x/"</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>data( hx4_a, offset<span class="op">=</span><span class="fl">26.0</span>, fn <span class="op">=</span> hx4_a.data_path <span class="op">+</span> <span class="st">"A-30m-sonar.txt"</span>, color <span class="op">=</span> <span class="st">"red"</span>,   width <span class="op">=</span> width, name <span class="op">=</span> <span class="st">"SONAR"</span>, ref<span class="op">=</span><span class="va">True</span>       )</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>data( hx4_a, offset<span class="op">=</span><span class="fl">26.0</span>, fn <span class="op">=</span> hx4_a.data_path <span class="op">+</span> <span class="st">"A-30m-czmil.txt"</span>, color <span class="op">=</span> <span class="st">"green"</span>, width <span class="op">=</span> width, name <span class="op">=</span> <span class="st">"CZMIL"</span>                 )</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>data( hx4_a, offset<span class="op">=</span><span class="fl">26.0</span>, fn <span class="op">=</span> hx4_a.data_path <span class="op">+</span> <span class="st">"A-30m-hx4.txt"</span>,   color <span class="op">=</span> <span class="st">"blue"</span>,  width <span class="op">=</span> width, name <span class="op">=</span> <span class="st">"Hawkeye 4x"</span>, scale<span class="op">=</span><span class="fl">1.0175</span> )</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>gen_all_stats( hx4_a )</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>plot_hists( hx4_a )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+The test area is 90.0 square meters. (2 by 45 meters)
+
+                        Ref            Std                                 Total
+    Data Source  Ref    Dif  Mean(m)  Dev(m)   Min(m)    Max(m)   P2P(m)  Points  Points/m  Scale  Offset(m)
+          SONAR &lt;--   0.000 -29.928    0.087  -30.161   -29.739    0.422     684     7.600  1.0000 26.000
+          CZMIL       0.070 -29.998    0.206  -30.621   -29.470    1.151     168     1.867  1.0000 26.000
+     Hawkeye 4x       0.016 -29.944    0.099  -30.220   -29.701    0.519     294     3.267  1.0175 26.000</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+    <style>
+        .bk-notebook-logo {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAOkSURBVDiNjZRtaJVlGMd/1/08zzln5zjP1LWcU9N0NkN8m2CYjpgQYQXqSs0I84OLIC0hkEKoPtiH3gmKoiJDU7QpLgoLjLIQCpEsNJ1vqUOdO7ppbuec5+V+rj4ctwzd8IIbbi6u+8f1539dt3A78eXC7QizUF7gyV1fD1Yqg4JWz84yffhm0qkFqBogB9rM8tZdtwVsPUhWhGcFJngGeWrPzHm5oaMmkfEg1usvLFyc8jLRqDOMru7AyC8saQr7GG7f5fvDeH7Ej8CM66nIF+8yngt6HWaKh7k49Soy9nXurCi1o3qUbS3zWfrYeQDTB/Qj6kX6Ybhw4B+bOYoLKCC9H3Nu/leUTZ1JdRWkkn2ldcCamzrcf47KKXdAJllSlxAOkRgyHsGC/zRday5Qld9DyoM4/q/rUoy/CXh3jzOu3bHUVZeU+DEn8FInkPBFlu3+nW3Nw0mk6vCDiWg8CeJaxEwuHS3+z5RgY+YBR6V1Z1nxSOfoaPa4LASWxxdNp+VWTk7+4vzaou8v8PN+xo+KY2xsw6une2frhw05CTYOmQvsEhjhWjn0bmXPjpE1+kplmmkP3suftwTubK9Vq22qKmrBhpY4jvd5afdRA3wGjFAgcnTK2s4hY0/GPNIb0nErGMCRxWOOX64Z8RAC4oCXdklmEvcL8o0BfkNK4lUg9HTl+oPlQxdNo3Mg4Nv175e/1LDGzZen30MEjRUtmXSfiTVu1kK8W4txyV6BMKlbgk3lMwYCiusNy9fVfvvwMxv8Ynl6vxoByANLTWplvuj/nF9m2+PDtt1eiHPBr1oIfhCChQMBw6Aw0UulqTKZdfVvfG7VcfIqLG9bcldL/+pdWTLxLUy8Qq38heUIjh4XlzZxzQm19lLFlr8vdQ97rjZVOLf8nclzckbcD4wxXMidpX30sFd37Fv/GtwwhzhxGVAprjbg0gCAEeIgwCZyTV2Z1REEW8O4py0wsjeloKoMr6iCY6dP92H6Vw/oTyICIthibxjm/DfN9lVz8IqtqKYLUXfoKVMVQVVJOElGjrnnUt9T9wbgp8AyYKaGlqingHZU/uG2NTZSVqwHQTWkx9hxjkpWDaCg6Ckj5qebgBVbT3V3NNXMSiWSDdGV3hrtzla7J+duwPOToIg42ChPQOQjspnSlp1V+Gjdged7+8UN5CRAV7a5EdFNwCjEaBR27b3W890TE7g24NAP/mMDXRWrGoFPQI9ls/MWO2dWFAar/xcOIImbbpA3zgAAAABJRU5ErkJggg==);
+        }
+    </style>
+    <div>
+        <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
+        <span id="a6304d94-6eed-4d3e-a989-c81bc77e23fb">Loading BokehJS ...</span>
+    </div>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+(function(root) {
+  function now() {
+    return new Date();
+  }
+
+  const force = true;
+
+  if (typeof root._bokeh_onload_callbacks === "undefined" || force === true) {
+    root._bokeh_onload_callbacks = [];
+    root._bokeh_is_loading = undefined;
+  }
+
+const JS_MIME_TYPE = 'application/javascript';
+  const HTML_MIME_TYPE = 'text/html';
+  const EXEC_MIME_TYPE = 'application/vnd.bokehjs_exec.v0+json';
+  const CLASS_NAME = 'output_bokeh rendered_html';
+
+  /**
+   * Render data to the DOM node
+   */
+  function render(props, node) {
+    const script = document.createElement("script");
+    node.appendChild(script);
+  }
+
+  /**
+   * Handle when an output is cleared or removed
+   */
+  function handleClearOutput(event, handle) {
+    function drop(id) {
+      const view = Bokeh.index.get_by_id(id)
+      if (view != null) {
+        view.model.document.clear()
+        Bokeh.index.delete(view)
+      }
+    }
+
+    const cell = handle.cell;
+
+    const id = cell.output_area._bokeh_element_id;
+    const server_id = cell.output_area._bokeh_server_id;
+
+    // Clean up Bokeh references
+    if (id != null) {
+      drop(id)
+    }
+
+    if (server_id !== undefined) {
+      // Clean up Bokeh references
+      const cmd_clean = "from bokeh.io.state import curstate; print(curstate().uuid_to_server['" + server_id + "'].get_sessions()[0].document.roots[0]._id)";
+      cell.notebook.kernel.execute(cmd_clean, {
+        iopub: {
+          output: function(msg) {
+            const id = msg.content.text.trim()
+            drop(id)
+          }
+        }
+      });
+      // Destroy server and session
+      const cmd_destroy = "import bokeh.io.notebook as ion; ion.destroy_server('" + server_id + "')";
+      cell.notebook.kernel.execute(cmd_destroy);
+    }
+  }
+
+  /**
+   * Handle when a new output is added
+   */
+  function handleAddOutput(event, handle) {
+    const output_area = handle.output_area;
+    const output = handle.output;
+
+    // limit handleAddOutput to display_data with EXEC_MIME_TYPE content only
+    if ((output.output_type != "display_data") || (!Object.prototype.hasOwnProperty.call(output.data, EXEC_MIME_TYPE))) {
+      return
+    }
+
+    const toinsert = output_area.element.find("." + CLASS_NAME.split(' ')[0]);
+
+    if (output.metadata[EXEC_MIME_TYPE]["id"] !== undefined) {
+      toinsert[toinsert.length - 1].firstChild.textContent = output.data[JS_MIME_TYPE];
+      // store reference to embed id on output_area
+      output_area._bokeh_element_id = output.metadata[EXEC_MIME_TYPE]["id"];
+    }
+    if (output.metadata[EXEC_MIME_TYPE]["server_id"] !== undefined) {
+      const bk_div = document.createElement("div");
+      bk_div.innerHTML = output.data[HTML_MIME_TYPE];
+      const script_attrs = bk_div.children[0].attributes;
+      for (let i = 0; i < script_attrs.length; i++) {
+        toinsert[toinsert.length - 1].firstChild.setAttribute(script_attrs[i].name, script_attrs[i].value);
+        toinsert[toinsert.length - 1].firstChild.textContent = bk_div.children[0].textContent
+      }
+      // store reference to server id on output_area
+      output_area._bokeh_server_id = output.metadata[EXEC_MIME_TYPE]["server_id"];
+    }
+  }
+
+  function register_renderer(events, OutputArea) {
+
+    function append_mime(data, metadata, element) {
+      // create a DOM node to render to
+      const toinsert = this.create_output_subarea(
+        metadata,
+        CLASS_NAME,
+        EXEC_MIME_TYPE
+      );
+      this.keyboard_manager.register_events(toinsert);
+      // Render to node
+      const props = {data: data, metadata: metadata[EXEC_MIME_TYPE]};
+      render(props, toinsert[toinsert.length - 1]);
+      element.append(toinsert);
+      return toinsert
+    }
+
+    /* Handle when an output is cleared or removed */
+    events.on('clear_output.CodeCell', handleClearOutput);
+    events.on('delete.Cell', handleClearOutput);
+
+    /* Handle when a new output is added */
+    events.on('output_added.OutputArea', handleAddOutput);
+
+    /**
+     * Register the mime type and append_mime function with output_area
+     */
+    OutputArea.prototype.register_mime_type(EXEC_MIME_TYPE, append_mime, {
+      /* Is output safe? */
+      safe: true,
+      /* Index of renderer in `output_area.display_order` */
+      index: 0
+    });
+  }
+
+  // register the mime type if in Jupyter Notebook environment and previously unregistered
+  if (root.Jupyter !== undefined) {
+    const events = require('base/js/events');
+    const OutputArea = require('notebook/js/outputarea').OutputArea;
+
+    if (OutputArea.prototype.mime_types().indexOf(EXEC_MIME_TYPE) == -1) {
+      register_renderer(events, OutputArea);
+    }
+  }
+  if (typeof (root._bokeh_timeout) === "undefined" || force === true) {
+    root._bokeh_timeout = Date.now() + 5000;
+    root._bokeh_failed_load = false;
+  }
+
+  const NB_LOAD_WARNING = {'data': {'text/html':
+     "<div style='background-color: #fdd'>\n"+
+     "<p>\n"+
+     "BokehJS does not appear to have successfully loaded. If loading BokehJS from CDN, this \n"+
+     "may be due to a slow or bad network connection. Possible fixes:\n"+
+     "</p>\n"+
+     "<ul>\n"+
+     "<li>re-rerun `output_notebook()` to attempt to load from CDN again, or</li>\n"+
+     "<li>use INLINE resources instead, as so:</li>\n"+
+     "</ul>\n"+
+     "<code>\n"+
+     "from bokeh.resources import INLINE\n"+
+     "output_notebook(resources=INLINE)\n"+
+     "</code>\n"+
+     "</div>"}};
+
+  function display_loaded() {
+    const el = document.getElementById("a6304d94-6eed-4d3e-a989-c81bc77e23fb");
+    if (el != null) {
+      el.textContent = "BokehJS is loading...";
+    }
+    if (root.Bokeh !== undefined) {
+      if (el != null) {
+        el.textContent = "BokehJS " + root.Bokeh.version + " successfully loaded.";
+      }
+    } else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(display_loaded, 100)
+    }
+  }
+
+  function run_callbacks() {
+    try {
+      root._bokeh_onload_callbacks.forEach(function(callback) {
+        if (callback != null)
+          callback();
+      });
+    } finally {
+      delete root._bokeh_onload_callbacks
+    }
+    console.debug("Bokeh: all callbacks have finished");
+  }
+
+  function load_libs(css_urls, js_urls, callback) {
+    if (css_urls == null) css_urls = [];
+    if (js_urls == null) js_urls = [];
+
+    root._bokeh_onload_callbacks.push(callback);
+    if (root._bokeh_is_loading > 0) {
+      console.debug("Bokeh: BokehJS is being loaded, scheduling callback at", now());
+      return null;
+    }
+    if (js_urls == null || js_urls.length === 0) {
+      run_callbacks();
+      return null;
+    }
+    console.debug("Bokeh: BokehJS not loaded, scheduling load and callback at", now());
+    root._bokeh_is_loading = css_urls.length + js_urls.length;
+
+    function on_load() {
+      root._bokeh_is_loading--;
+      if (root._bokeh_is_loading === 0) {
+        console.debug("Bokeh: all BokehJS libraries/stylesheets loaded");
+        run_callbacks()
+      }
+    }
+
+    function on_error(url) {
+      console.error("failed to load " + url);
+    }
+
+    for (let i = 0; i < css_urls.length; i++) {
+      const url = css_urls[i];
+      const element = document.createElement("link");
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.rel = "stylesheet";
+      element.type = "text/css";
+      element.href = url;
+      console.debug("Bokeh: injecting link tag for BokehJS stylesheet: ", url);
+      document.body.appendChild(element);
+    }
+
+    for (let i = 0; i < js_urls.length; i++) {
+      const url = js_urls[i];
+      const element = document.createElement('script');
+      element.onload = on_load;
+      element.onerror = on_error.bind(null, url);
+      element.async = false;
+      element.src = url;
+      console.debug("Bokeh: injecting script tag for BokehJS library: ", url);
+      document.head.appendChild(element);
+    }
+  };
+
+  function inject_raw_css(css) {
+    const element = document.createElement("style");
+    element.appendChild(document.createTextNode(css));
+    document.body.appendChild(element);
+  }
+
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.2.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.3.2.min.js"];
+  const css_urls = [];
+
+  const inline_js = [    function(Bokeh) {
+      Bokeh.set_log_level("info");
+    },
+function(Bokeh) {
+    }
+  ];
+
+  function run_inline_js() {
+    if (root.Bokeh !== undefined || force === true) {
+          for (let i = 0; i < inline_js.length; i++) {
+      inline_js[i].call(root, root.Bokeh);
+    }
+if (force === true) {
+        display_loaded();
+      }} else if (Date.now() < root._bokeh_timeout) {
+      setTimeout(run_inline_js, 100);
+    } else if (!root._bokeh_failed_load) {
+      console.log("Bokeh: BokehJS failed to load within specified timeout.");
+      root._bokeh_failed_load = true;
+    } else if (force !== true) {
+      const cell = $(document.getElementById("a6304d94-6eed-4d3e-a989-c81bc77e23fb")).parents('.cell').data().cell;
+      cell.output_area.append_execute_result(NB_LOAD_WARNING)
+    }
+  }
+
+  if (root._bokeh_is_loading === 0) {
+    console.debug("Bokeh: BokehJS loaded, going straight to plotting");
+    run_inline_js();
+  } else {
+    load_libs(css_urls, js_urls, function() {
+      console.debug("Bokeh: BokehJS plotting callback run at", now());
+      run_inline_js();
+    });
+  }
+}(window));
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+  <div id="af514ad5-1c92-437a-8a03-1d7b387b1d3a" data-root-id="p1093" style="display: contents;"></div>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+(function(root) {
+  function embed_document(root) {
+  const docs_json = {"d4cf0620-b270-4503-8c46-bcb2bd462145":{"version":"3.3.2","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p1093","attributes":{"width":700,"height":400,"x_range":{"type":"object","name":"DataRange1d","id":"p1094"},"y_range":{"type":"object","name":"DataRange1d","id":"p1095","attributes":{"start":0}},"x_scale":{"type":"object","name":"LinearScale","id":"p1103"},"y_scale":{"type":"object","name":"LinearScale","id":"p1104"},"title":{"type":"object","name":"Title","id":"p1096","attributes":{"text":"Area A ~30 meter depth. 1cm bins.","text_font_size":"24pt"}},"renderers":[{"type":"object","name":"GlyphRenderer","id":"p1133","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1127","attributes":{"selected":{"type":"object","name":"Selection","id":"p1128","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1129"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"8KfGSzcpPsCecbPQpCY+wEw7oFUSJD7A+gSN2n8hPsCnznlf7R4+wFWYZuRaHD7AA2JTacgZPsCxK0DuNRc+wF/1LHOjFD7ADb8Z+BASPsC7iAZ9fg8+wGhS8wHsDD7AFhzghlkKPsDE5cwLxwc+wHKvuZA0BT7AIHmmFaICPsDOQpOaDwA+wHwMgB99/T3AKdZspOr6PcDXn1kpWPg9wIVpRq7F9T3AMzMzMzPzPcDh/B+4oPA9wI/GDD0O7j3APZD5wXvrPcDqWeZG6eg9wJgj08tW5j3ARu2/UMTjPcD0tqzVMeE9wKKAmVqf3j3AUEqG3wzcPcD+E3Nketk9wKvdX+nn1j3AWadMblXUPcAHcTnzwtE9wLU6Jngwzz3AYwQT/Z3MPcARzv+BC8o9wL+X7AZ5xz3AbGHZi+bEPcAaK8YQVMI9wMj0spXBvz3A"},"shape":[42],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"AgAAAAEAAAABAAAAAgAAAAEAAAAHAAAACwAAABAAAAANAAAADwAAAAoAAAALAAAABQAAABIAAAARAAAADgAAAA8AAAAOAAAAHQAAABcAAAAaAAAAIAAAACcAAAAfAAAAJgAAAB8AAAAjAAAAIAAAABUAAAAaAAAAFgAAABAAAAARAAAADgAAAAwAAAALAAAADgAAAA8AAAALAAAACwAAAAIAAAADAAAA"},"shape":[42],"dtype":"int32","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1134","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1135"}}},"glyph":{"type":"object","name":"Line","id":"p1130","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1131","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1132","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"red","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1142","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1139","attributes":{"selected":{"type":"object","name":"Selection","id":"p1140","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1141"},"data":{"type":"map"}}},"view":{"type":"object","name":"CDSView","id":"p1143","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1144"}}},"glyph":{"type":"object","name":"VSpan","id":"p1138","attributes":{"x":{"type":"value","value":-29.928220760233916},"line_color":{"type":"value","value":"red"},"line_alpha":{"type":"value","value":0.5}}}}},{"type":"object","name":"GlyphRenderer","id":"p1151","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1145","attributes":{"selected":{"type":"object","name":"Selection","id":"p1146","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1147"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"5tAi2/mePsB2UBbtaZw+wAfQCf/ZmT7Al0/9EEqXPsAnz/AiupQ+wLdO5DQqkj7ASM7XRpqPPsDYTctYCo0+wGjNvmp6ij7A+UyyfOqHPsCJzKWOWoU+wBlMmaDKgj7AqsuMsjqAPsA6S4DEqn0+wMrKc9Yaez7AWkpn6Ip4PsDryVr6+nU+wHtJTgxrcz7AC8lBHttwPsCcSDUwS24+wCzIKEK7az7AvEccVCtpPsBMxw9mm2Y+wN1GA3gLZD7Abcb2iXthPsD9Reqb614+wI7F3a1bXD7AHkXRv8tZPsCuxMTRO1c+wD9EuOOrVD7Az8Or9RtSPsBfQ58HjE8+wO/Ckhn8TD7AgEKGK2xKPsAQwnk93Ec+wKBBbU9MRT7AMcFgYbxCPsDBQFRzLEA+wFHAR4WcPT7A4j87lww7PsByvy6pfDg+wAI/IrvsNT7Akr4VzVwzPsAjPgnfzDA+wLO9/PA8Lj7AQz3wAq0rPsDUvOMUHSk+wGQ81yaNJj7A9LvKOP0jPsCEO75KbSE+wBW7sVzdHj7ApTqlbk0cPsA1upiAvRk+wMY5jJItFz7AVrl/pJ0UPsDmOHO2DRI+wHe4Zsh9Dz7ABzha2u0MPsCXt03sXQo+wCc3Qf7NBz7AuLY0ED4FPsBINigirgI+wNi1GzQeAD7AaTUPRo79PcD5tAJY/vo9wIk09mlu+D3AGrTpe971PcCqM92NTvM9wDqz0J++8D3AyjLEsS7uPcBbsrfDnus9wOsxq9UO6T3Ae7Ge537mPcAMMZL57uM9wJywhQtf4T3ALDB5Hc/ePcC8r2wvP9w9wE0vYEGv2T3A3a5TUx/XPcBtLkdlj9Q9wP6tOnf/0T3Aji0uiW/PPcAerSGb38w9wK8sFa1Pyj3AP6wIv7/HPcDPK/zQL8U9wF+r7+Kfwj3A8Crj9A/APcCAqtYGgL09wBAqyhjwuj3Aoam9KmC4PcAxKbE80LU9wMGopE5Asz3AUSiYYLCwPcDip4tyIK49wHInf4SQqz3AAqdylgCpPcCTJmaocKY9wCOmWbrgoz3AsyVNzFChPcBEpUDewJ49wNQkNPAwnD3AZKQnAqGZPcD0IxsUEZc9wIWjDiaBlD3AFSMCOPGRPcClovVJYY89wDYi6VvRjD3AxqHcbUGKPcBWIdB/sYc9wOagw5EhhT3AdyC3o5GCPcAHoKq1AYA9wJcfnsdxfT3AKJ+R2eF6PcA="},"shape":[115],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAAAACAAAAAQAAAAEAAAABAAAAAQAAAAEAAAACAAAAAAAAAAEAAAABAAAAAQAAAAEAAAACAAAAAQAAAAEAAAABAAAAAgAAAAIAAAAAAAAAAwAAAAIAAAACAAAAAQAAAAIAAAAGAAAAAwAAAAEAAAAEAAAAAQAAAAMAAAAFAAAAAwAAAAMAAAACAAAAAQAAAAEAAAAAAAAABAAAAAUAAAACAAAAAgAAAAIAAAACAAAAAgAAAAQAAAAGAAAAAQAAAAMAAAACAAAABAAAAAQAAAAFAAAABAAAAAMAAAADAAAABgAAAAQAAAABAAAAAAAAAAEAAAACAAAAAQAAAAMAAAADAAAAAQAAAAAAAAAFAAAABAAAAAIAAAACAAAAAQAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA=="},"shape":[115],"dtype":"int32","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1152","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1153"}}},"glyph":{"type":"object","name":"Line","id":"p1148","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"green","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1149","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"green","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1150","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"green","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1159","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1156","attributes":{"selected":{"type":"object","name":"Selection","id":"p1157","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1158"},"data":{"type":"map"}}},"view":{"type":"object","name":"CDSView","id":"p1160","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1161"}}},"glyph":{"type":"object","name":"VSpan","id":"p1155","attributes":{"x":{"type":"value","value":-29.998339285714284},"line_color":{"type":"value","value":"green"},"line_alpha":{"type":"value","value":0.5}}}}},{"type":"object","name":"GlyphRenderer","id":"p1168","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1162","attributes":{"selected":{"type":"object","name":"Selection","id":"p1163","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1164"},"data":{"type":"map","entries":[["x",{"type":"ndarray","array":{"type":"bytes","data":"yEs3iUE4PsApDwu1pjU+wIrS3uALMz7A65WyDHEwPsBMWYY41i0+wK0cWmQ7Kz7ADuAtkKAoPsBvowG8BSY+wNBm1edqIz7AMSqpE9AgPsCS7Xw/NR4+wPOwUGuaGz7AVHQkl/8YPsC2N/jCZBY+wBf7y+7JEz7AeL6fGi8RPsDZgXNGlA4+wDpFR3L5Cz7Amwgbnl4JPsD8y+7JwwY+wF2PwvUoBD7AvlKWIY4BPsAfFmpN8/49wIDZPXlY/D3A4ZwRpb35PcBCYOXQIvc9wKMjufyH9D3ABOeMKO3xPcBlqmBUUu89wMZtNIC37D3AJzEIrBzqPcCI9NvXgec9wOm3rwPn5D3ASnuDL0ziPcCrPldbsd89wAwCK4cW3T3AbcX+snvaPcDOiNLe4Nc9wC9MpgpG1T3AkQ96NqvSPcDy0k1iENA9wFOWIY51zT3AtFn1udrKPcAVHcnlP8g9wHbgnBGlxT3A16NwPQrDPcA4Z0Rpb8A9wJkqGJXUvT3A+u3rwDm7PcBbsb/snrg9wLx0kxgEtj3A"},"shape":[51],"dtype":"float64","order":"little"}],["y",{"type":"ndarray","array":{"type":"bytes","data":"AQAAAAEAAAAAAAAAAQAAAAEAAAADAAAAAgAAAAAAAAAAAAAAAwAAAAkAAAAAAAAABQAAAAIAAAAHAAAAAgAAAAQAAAAHAAAAAwAAAAgAAAAJAAAADAAAAAgAAAAOAAAAFQAAAAAAAAAMAAAAFQAAAAAAAAAPAAAAHwAAAAgAAAAAAAAADgAAAAsAAAAGAAAADgAAAAcAAAAFAAAAAAAAAAkAAAAGAAAAAQAAAAAAAAABAAAAAwAAAAAAAAAEAAAAAQAAAAAAAAACAAAA"},"shape":[51],"dtype":"int32","order":"little"}]]}}},"view":{"type":"object","name":"CDSView","id":"p1169","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1170"}}},"glyph":{"type":"object","name":"Line","id":"p1165","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"blue","line_width":3}},"nonselection_glyph":{"type":"object","name":"Line","id":"p1166","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"blue","line_alpha":0.1,"line_width":3}},"muted_glyph":{"type":"object","name":"Line","id":"p1167","attributes":{"x":{"type":"field","field":"x"},"y":{"type":"field","field":"y"},"line_color":"blue","line_alpha":0.2,"line_width":3}}}},{"type":"object","name":"GlyphRenderer","id":"p1176","attributes":{"data_source":{"type":"object","name":"ColumnDataSource","id":"p1173","attributes":{"selected":{"type":"object","name":"Selection","id":"p1174","attributes":{"indices":[],"line_indices":[]}},"selection_policy":{"type":"object","name":"UnionRenderers","id":"p1175"},"data":{"type":"map"}}},"view":{"type":"object","name":"CDSView","id":"p1177","attributes":{"filter":{"type":"object","name":"AllIndices","id":"p1178"}}},"glyph":{"type":"object","name":"VSpan","id":"p1172","attributes":{"x":{"type":"value","value":-29.944436649659863},"line_color":{"type":"value","value":"blue"},"line_alpha":{"type":"value","value":0.5}}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1102","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1115"},{"type":"object","name":"WheelZoomTool","id":"p1116","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p1117","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1118","attributes":{"syncable":false,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1123"},{"type":"object","name":"ResetTool","id":"p1124"},{"type":"object","name":"HelpTool","id":"p1125"},{"type":"object","name":"HoverTool","id":"p1126","attributes":{"renderers":"auto","tooltips":[["Depth","$x"]]}}]}},"left":[{"type":"object","name":"LinearAxis","id":"p1110","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1111","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1112"},"axis_label":"Number of Depths","axis_label_text_font_size":"18pt","axis_label_text_font_style":"bold","major_label_policy":{"type":"object","name":"AllLabels","id":"p1113"},"major_label_text_font_size":"16pt","major_label_text_font_style":"bold"}}],"below":[{"type":"object","name":"LinearAxis","id":"p1105","attributes":{"ticker":{"type":"object","name":"BasicTicker","id":"p1106","attributes":{"mantissas":[1,2,5]}},"formatter":{"type":"object","name":"BasicTickFormatter","id":"p1107"},"axis_label":"NAVD88 Depth (m)","axis_label_text_font_size":"18pt","axis_label_text_font_style":"bold","major_label_policy":{"type":"object","name":"AllLabels","id":"p1108"},"major_label_text_font_size":"16pt","major_label_text_font_style":"bold"}}],"center":[{"type":"object","name":"Grid","id":"p1109","attributes":{"axis":{"id":"p1105"}}},{"type":"object","name":"Grid","id":"p1114","attributes":{"dimension":1,"axis":{"id":"p1110"}}},{"type":"object","name":"Legend","id":"p1136","attributes":{"items":[{"type":"object","name":"LegendItem","id":"p1137","attributes":{"label":{"type":"value","value":"SONAR"},"renderers":[{"id":"p1133"}]}},{"type":"object","name":"LegendItem","id":"p1154","attributes":{"label":{"type":"value","value":"CZMIL"},"renderers":[{"id":"p1151"}]}},{"type":"object","name":"LegendItem","id":"p1171","attributes":{"label":{"type":"value","value":"Hawkeye 4x"},"renderers":[{"id":"p1168"}]}}]}}]}}]}};
+  const render_items = [{"docid":"d4cf0620-b270-4503-8c46-bcb2bd462145","roots":{"p1093":"af514ad5-1c92-437a-8a03-1d7b387b1d3a"},"root_ids":["p1093"]}];
+  root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
+  }
+  if (root.Bokeh !== undefined) {
+    embed_document(root);
+  } else {
+    let attempts = 0;
+    const timer = setInterval(function(root) {
+      if (root.Bokeh !== undefined) {
+        clearInterval(timer);
+        embed_document(root);
+      } else {
+        attempts++;
+        if (attempts > 100) {
+          clearInterval(timer);
+          console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+        }
+      }
+    }, 10, root)
+  }
+})(window);
+</script>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/lidar532\.github\.io\/lidar_review_tools");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/lidar532/lidar_review_tools/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
