@@ -6,12 +6,15 @@
 import lidar_review_tools.lidar_tools  as lt
 ```
 
-Visit the website for this project here:
-<https://lidar532.github.io/lidar_review_tools/>
+- Project Website: <https://lidar532.github.io/lidar_review_tools/>
+- Github Repository: <https://github.com/lidar532/lidar_review_tools>
 
 ## Install
 
+Clone the repository to your computer and then:
+
 ``` sh
+
 pip install lidar_review_tools
 
 or
